@@ -188,9 +188,9 @@ def crear_xsl_basico():
 
         <div class="invoice">
           <div class="header">
-            <h1>Factura #<xsl:value-of select="Factura/Encabezado/IDFactura"/></h1>
-            <div class="barcode">
-              <img>
+            <h1 style="margin: 0;">Factura #<xsl:value-of select="Factura/Encabezado/IDFactura"/></h1>
+            <div class="barcode" style="margin-left: auto;">
+              <img style="width: 200px; height: auto;">
                 <xsl:attribute name="src">
                   <xsl:text>data:image/png;base64,</xsl:text>
                   <xsl:value-of select="Factura/Encabezado/CodigoBarras"/>
@@ -309,7 +309,7 @@ if __name__ == "__main__":
     # Crear el archivo XSL básico
     crear_xsl_basico()
 
-    # Generar una factura XML para la primera venta
+    # Generar una factura XML para la primera venta(modificar la funcion si quieres generar todos)
     sale = df.iloc[0]
     
     # Generar la factura XML
