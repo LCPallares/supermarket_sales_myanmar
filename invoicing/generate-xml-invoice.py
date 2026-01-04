@@ -50,8 +50,7 @@ class XMLInvoiceTemplate:
                     element.text = str(data[field])
                 del element.attrib['field']
         
-        xmlstr = minidom.parseString(ET.tostring(self.root)).toprettyxml(indent="  ")
-        return xmlstr
+        return ET.tostring(self.root, encoding='unicode')
 
 def crear_plantilla_personalizada():
     template = XMLInvoiceTemplate()
@@ -81,37 +80,22 @@ def crear_plantilla_personalizada():
     
     return template
 
-def generar_facturas_xml(df):
-    template = crear_plantilla_personalizada()
-    
-    for _, row in df.iterrows():
-        # Crear el documento XML
-        xml_factura = template.generate_xml(row.to_dict())
-        
-        # Agregar la instrucción de procesamiento XSL
-        xml_con_xsl = f'<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="factura_style.xsl"?>\n{xml_factura}'
-        
-        nombre_archivo = f"factura_{row['ID de Factura']}.xml"
-        with open(nombre_archivo, "w", encoding="utf-8") as f:
-            f.write(xml_con_xsl)
-        print(f"Factura generada: {nombre_archivo}")
-
-
 def generar_factura_xml(fila):
     template = crear_plantilla_personalizada()
     
     # Crear el documento XML
     xml_factura = template.generate_xml(fila.to_dict())
     
-    # Agregar la instrucción de procesamiento XSL (si es necesario)
-    xml_con_xsl = f'<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="factura_style.xsl"?>\n{xml_factura}'
+    # Crear el documento XML completo con la declaración XML y la referencia XSL
+    xml_completo = f'''<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="factura_style.xsl"?>
+{xml_factura}'''
     
     nombre_archivo = f"factura_{fila['ID de Factura']}.xml"
     with open(nombre_archivo, "w", encoding="utf-8") as f:
-        f.write(xml_con_xsl)
+        f.write(xml_completo)
     
     print(f"Factura generada: {nombre_archivo}")
-
 
 def crear_xsl_basico():
     xsl_content = """<?xml version="1.0" encoding="UTF-8"?>
@@ -160,9 +144,7 @@ if __name__ == "__main__":
     # Generar una factura XML para la primera venta
     sale = df.iloc[0]
     
-    # Generar las facturas XML
-    #generar_facturas_xml(df)
+    # Generar la factura XML
     generar_factura_xml(sale)
     
-    #print(f"Proceso completado. Se han generado {len(df)} facturas XML con referencia a XSL.")
-    print(f"Proceso completado. Se han generado factura XML con referencia a XSL.")
+    print("Proceso completado. Se ha generado una factura XML con referencia a XSL.")
