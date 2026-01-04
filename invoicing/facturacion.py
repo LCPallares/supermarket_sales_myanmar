@@ -2,33 +2,9 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import jinja2
-# import barcode
-from barcode import Code128
-from barcode.writer import ImageWriter
-import base64
-from io import BytesIO
 
 # Configuración de la página
 st.set_page_config(page_title="Sistema de Facturación", layout="wide")
-
-def generar_codigo_barras0(invoice_id):
-    # Crear código de barras
-    cod128 = barcode.get_barcode_class('code128')
-    # Generar código de barras en memoria
-    rv = BytesIO()
-    codigo = cod128(invoice_id, writer=ImageWriter())
-    codigo.write(rv)
-    # Convertir a base64 para insertar en HTML
-    imagen_base64 = base64.b64encode(rv.getvalue()).decode()
-    return f"data:image/png;base64,{imagen_base64}"
-
-def generar_codigo_barras(invoice_id):
-    # Crear código de barras (sintaxis corregida)
-    rv = BytesIO()
-    Code128(invoice_id, writer=ImageWriter()).write(rv)
-    # Convertir a base64 para insertar en HTML
-    imagen_base64 = base64.b64encode(rv.getvalue()).decode()
-    return f"data:image/png;base64,{imagen_base64}"
 
 def cargar_datos():
     # Carga el CSV
@@ -57,9 +33,6 @@ def cargar_datos():
     return df
 
 def generar_html_factura(datos_factura):
-    # Generar código de barras
-    barcode_img = generar_codigo_barras(datos_factura['Invoice_ID'])
-    
     template_string = """
     <!DOCTYPE html>
     <html>
@@ -74,8 +47,6 @@ def generar_html_factura(datos_factura):
             .productos th { background: #4a90e2; color: white; padding: 10px; }
             .productos td { padding: 10px; border-bottom: 1px solid #ddd; }
             .total { text-align: right; margin-top: 20px; }
-            .codigo-barras { text-align: center; margin: 20px 0; }
-            .codigo-barras img { max-width: 300px; }
         </style>
     </head>
     <body>
@@ -83,11 +54,6 @@ def generar_html_factura(datos_factura):
             <div class="cabecera">
                 <h1>FACTURA</h1>
                 <div>Nº: {{ datos['Invoice_ID'] }}</div>
-            </div>
-
-            <div class="codigo-barras">
-                <img src="{{ barcode_img }}" alt="Código de barras">
-                <div>{{ datos['Invoice_ID'] }}</div>
             </div>
 
             <div class="info-tienda">
@@ -135,7 +101,7 @@ def generar_html_factura(datos_factura):
     """
     
     template = jinja2.Template(template_string)
-    html_out = template.render(datos=datos_factura, barcode_img=barcode_img)
+    html_out = template.render(datos=datos_factura)
     return html_out
 
 def main():

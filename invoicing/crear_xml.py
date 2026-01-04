@@ -31,13 +31,16 @@ df = load_data()
 def clean_column_name(name):
     # Reemplazar espacios por guiones bajos y eliminar caracteres no válidos
     name = name.replace(' ', '_')
-    name = name.replace('%', 'Porcentaje')  # Reemplaza % por Porcentaje
+    name = name.replace('%', '_Porcentaje')  # Reemplaza % por Porcentaje
     name = name.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u') # Quitar tildes
     name = name.replace('ñ', 'n')  # Reemplaza ñ por n
     return name
 
-def crear_xml(df):
+def crear_xml(df, stylesheet_path="factura_style.xslt"):
+    # Crear el elemento raíz y agregar la declaración xml-stylesheet
     root = ET.Element("Facturas")
+    xml_declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    stylesheet_declaration = f'<?xml-stylesheet type="text/xsl" href="{stylesheet_path}"?>\n'
 
     for _, row in df.iterrows():
         factura = ET.SubElement(root, "Factura")
@@ -48,13 +51,12 @@ def crear_xml(df):
             elemento.text = str(row[field])
     
     # Convertir el árbol a un string de XML
-    tree = ET.ElementTree(root)
-    xml_str = ET.tostring(root, encoding='unicode')
+    xml_str = xml_declaration + stylesheet_declaration + ET.tostring(root, encoding='unicode')
     
     # Guardar el XML en un archivo
     with open("facturas.xml", "w", encoding="utf-8") as f:
         f.write(xml_str)
 
-    print("Archivo XML generado: facturas.xml")
+    print("Archivo XML con stylesheet generado: facturas.xml")
 
 crear_xml(df)
