@@ -1,185 +1,168 @@
 import pandas as pd
-from lxml import etree
-from datetime import datetime
-import uuid
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 def load_data():
     df = pd.read_csv("supermarket_Sales.csv")
-    df['Date'] = pd.to_datetime(df['Date'])
+    columnas_traducidas = {
+        'Invoice ID': 'ID de Factura',
+        'Branch': 'Sucursal',
+        'City': 'Ciudad',
+        'Customer type': 'Tipo de Cliente',
+        'Gender': 'Género',
+        'Product line': 'Línea de Producto',
+        'Unit price': 'Precio Unitario',
+        'Quantity': 'Cantidad',
+        'Tax 5%': 'Impuesto 5%',
+        'Total': 'Total',
+        'Date': 'Fecha',
+        'Time': 'Hora',
+        'Payment': 'Método de Pago',
+        'Cost of goods sold': 'Costo de Bienes Vendidos',
+        'Gross margin percentage': 'Porcentaje de Margen Bruto',
+        'Gross income': 'Ingreso Bruto',
+        'Customer stratification rating': 'Calificación de Estratificación del Cliente'
+    }
+    df = df.rename(columns=columnas_traducidas)
+    df['Fecha'] = pd.to_datetime(df['Fecha'])
     return df
 
-def generate_xml_invoice(sale):
-    # Crear el elemento raíz
-    root = etree.Element("FacturaElectronica", xmlns="http://www.sat.gob.mx/cfd/3")
+class XMLInvoiceTemplate:
+    def __init__(self):
+        self.root = ET.Element("Factura")
+        self.structure = {}
+
+    def add_element(self, path, field_name):
+        parts = path.split('/')
+        current = self.root
+        for part in parts[:-1]:
+            if part not in self.structure:
+                self.structure[part] = ET.SubElement(current, part)
+            current = self.structure[part]
+        self.structure[path] = ET.SubElement(current, parts[-1])
+        self.structure[path].set('field', field_name)
+
+    def generate_xml(self, data):
+        for element in self.root.iter():
+            if 'field' in element.attrib:
+                field = element.attrib['field']
+                if field in data:
+                    element.text = str(data[field])
+                del element.attrib['field']
+        
+        xmlstr = minidom.parseString(ET.tostring(self.root)).toprettyxml(indent="  ")
+        return xmlstr
+
+def crear_plantilla_personalizada():
+    template = XMLInvoiceTemplate()
     
-    # Información general de la factura
-    comprobante = etree.SubElement(root, "Comprobante")
-    etree.SubElement(comprobante, "Serie").text = "A"
-    etree.SubElement(comprobante, "Folio").text = sale['Invoice ID']
-    etree.SubElement(comprobante, "Fecha").text = f"{sale['Date'].strftime('%Y-%m-%d')}T{sale['Time']}"
-    etree.SubElement(comprobante, "FormaPago").text = "01"  # 01 = Efectivo
-    etree.SubElement(comprobante, "SubTotal").text = str(sale['Total'] - sale['Tax 5%'])
-    etree.SubElement(comprobante, "Moneda").text = "MXN"
-    etree.SubElement(comprobante, "Total").text = str(sale['Total'])
-    etree.SubElement(comprobante, "TipoDeComprobante").text = "I"  # I = Ingreso
-    etree.SubElement(comprobante, "MetodoPago").text = "PUE"  # PUE = Pago en una sola exhibición
-    etree.SubElement(comprobante, "LugarExpedicion").text = "12345"  # Código postal del lugar de expedición
-
-    # Información del emisor (la tienda)
-    emisor = etree.SubElement(root, "Emisor")
-    etree.SubElement(emisor, "Rfc").text = "XAXX010101000"  # RFC genérico
-    etree.SubElement(emisor, "Nombre").text = sale['Branch']
-    etree.SubElement(emisor, "RegimenFiscal").text = "601"  # 601 = General de Ley Personas Morales
-
-    # Información del receptor (el cliente)
-    receptor = etree.SubElement(root, "Receptor")
-    etree.SubElement(receptor, "Rfc").text = "XAXX010101000"  # RFC genérico
-    etree.SubElement(receptor, "Nombre").text = f"Cliente {sale['Customer type']}"
-    etree.SubElement(receptor, "UsoCFDI").text = "G01"  # G01 = Adquisición de mercancías
-
-    # Conceptos (productos)
-    conceptos = etree.SubElement(root, "Conceptos")
-    concepto = etree.SubElement(conceptos, "Concepto")
-    etree.SubElement(concepto, "ClaveProdServ").text = "01010101"  # Clave genérica
-    etree.SubElement(concepto, "Cantidad").text = str(sale['Quantity'])
-    etree.SubElement(concepto, "ClaveUnidad").text = "H87"  # Pieza
-    etree.SubElement(concepto, "Unidad").text = "Pieza"
-    etree.SubElement(concepto, "Descripcion").text = sale['Product line']
-    etree.SubElement(concepto, "ValorUnitario").text = str(sale['Unit price'])
-    etree.SubElement(concepto, "Importe").text = str(sale['Total'] - sale['Tax 5%'])
-
-    # Impuestos
-    impuestos = etree.SubElement(concepto, "Impuestos")
-    traslados = etree.SubElement(impuestos, "Traslados")
-    traslado = etree.SubElement(traslados, "Traslado")
-    etree.SubElement(traslado, "Base").text = str(sale['Total'] - sale['Tax 5%'])
-    etree.SubElement(traslado, "Impuesto").text = "002"  # 002 = IVA
-    etree.SubElement(traslado, "TipoFactor").text = "Tasa"
-    etree.SubElement(traslado, "TasaOCuota").text = "0.160000"
-    etree.SubElement(traslado, "Importe").text = str(sale['Tax 5%'])
-
-    # Crear el árbol XML
-    tree = etree.ElementTree(root)
+    # Definir la estructura de la plantilla
+    template.add_element("Encabezado/IDFactura", "ID de Factura")
+    template.add_element("Encabezado/Fecha", "Fecha")
+    template.add_element("Encabezado/Hora", "Hora")
     
-    # Generar un nombre de archivo único
-    filename = f"factura_{sale['Invoice ID'].replace('/', '_')}.xml"
+    template.add_element("InformacionCliente/Tipo", "Tipo de Cliente")
+    template.add_element("InformacionCliente/Genero", "Género")
+    template.add_element("InformacionCliente/Calificacion", "Calificación de Estratificación del Cliente")
     
-    # Guardar el archivo XML
-    tree.write(filename, pretty_print=True, xml_declaration=True, encoding='utf-8')
+    template.add_element("DatosSucursal/Nombre", "Sucursal")
+    template.add_element("DatosSucursal/Ciudad", "Ciudad")
     
-    return filename
-
-def create_xslt():
-    nsmap = {
-        'xsl': 'http://www.w3.org/1999/XSL/Transform',
-        None: 'http://www.w3.org/1999/xhtml'
-    }
+    template.add_element("DetallesProducto/LineaProducto", "Línea de Producto")
+    template.add_element("DetallesProducto/PrecioUnitario", "Precio Unitario")
+    template.add_element("DetallesProducto/Cantidad", "Cantidad")
     
-    xslt_root = etree.Element("{http://www.w3.org/1999/XSL/Transform}stylesheet",
-                              attrib={"version": "1.0"},
-                              nsmap=nsmap)
-
-    etree.SubElement(xslt_root, "{http://www.w3.org/1999/XSL/Transform}output",
-                     method="html", encoding="utf-8", indent="yes")
-
-    template = etree.SubElement(xslt_root, "{http://www.w3.org/1999/XSL/Transform}template", match="/")
-    html = etree.SubElement(template, "html")
-    head = etree.SubElement(html, "head")
-    etree.SubElement(head, "title").text = "Factura Electrónica"
-    style = etree.SubElement(head, "style")
-    style.text = """
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
-        h2 { color: #34495e; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .total { font-weight: bold; }
-    """
-
-    body = etree.SubElement(html, "body")
-    etree.SubElement(body, "h1").text = "Factura Electrónica"
-
-    # Información general
-    etree.SubElement(body, "h2").text = "Información General"
-    info_table = etree.SubElement(body, "table")
-    for field in ["Serie", "Folio", "Fecha", "FormaPago", "SubTotal", "Moneda", "Total", "TipoDeComprobante", "MetodoPago", "LugarExpedicion"]:
-        tr = etree.SubElement(info_table, "tr")
-        etree.SubElement(tr, "th").text = field
-        td = etree.SubElement(tr, "td")
-        etree.SubElement(td, "{http://www.w3.org/1999/XSL/Transform}value-of", select=f"FacturaElectronica/Comprobante/{field}")
-
-    # Emisor
-    etree.SubElement(body, "h2").text = "Emisor"
-    emisor_table = etree.SubElement(body, "table")
-    for field in ["Rfc", "Nombre", "RegimenFiscal"]:
-        tr = etree.SubElement(emisor_table, "tr")
-        etree.SubElement(tr, "th").text = field
-        td = etree.SubElement(tr, "td")
-        etree.SubElement(td, "{http://www.w3.org/1999/XSL/Transform}value-of", select=f"FacturaElectronica/Emisor/{field}")
-
-    # Receptor
-    etree.SubElement(body, "h2").text = "Receptor"
-    receptor_table = etree.SubElement(body, "table")
-    for field in ["Rfc", "Nombre", "UsoCFDI"]:
-        tr = etree.SubElement(receptor_table, "tr")
-        etree.SubElement(tr, "th").text = field
-        td = etree.SubElement(tr, "td")
-        etree.SubElement(td, "{http://www.w3.org/1999/XSL/Transform}value-of", select=f"FacturaElectronica/Receptor/{field}")
-
-    # Conceptos
-    etree.SubElement(body, "h2").text = "Conceptos"
-    conceptos_table = etree.SubElement(body, "table")
-    tr = etree.SubElement(conceptos_table, "tr")
-    for header in ["Cantidad", "Unidad", "Descripción", "Valor Unitario", "Importe"]:
-        etree.SubElement(tr, "th").text = header
+    template.add_element("InformacionFinanciera/Impuesto", "Impuesto 5%")
+    template.add_element("InformacionFinanciera/Total", "Total")
+    template.add_element("InformacionFinanciera/MetodoPago", "Método de Pago")
+    template.add_element("InformacionFinanciera/CostoBienesVendidos", "Costo de Bienes Vendidos")
+    template.add_element("InformacionFinanciera/PorcentajeMargenBruto", "Porcentaje de Margen Bruto")
+    template.add_element("InformacionFinanciera/IngresoBruto", "Ingreso Bruto")
     
-    tr = etree.SubElement(conceptos_table, "tr")
-    for field in ["Cantidad", "Unidad", "Descripcion", "ValorUnitario", "Importe"]:
-        td = etree.SubElement(tr, "td")
-        etree.SubElement(td, "{http://www.w3.org/1999/XSL/Transform}value-of", select=f"FacturaElectronica/Conceptos/Concepto/{field}")
+    return template
 
-    # Impuestos
-    etree.SubElement(body, "h2").text = "Impuestos"
-    impuestos_table = etree.SubElement(body, "table")
-    tr = etree.SubElement(impuestos_table, "tr")
-    for header in ["Base", "Impuesto", "Tipo Factor", "Tasa o Cuota", "Importe"]:
-        etree.SubElement(tr, "th").text = header
+def generar_facturas_xml(df):
+    template = crear_plantilla_personalizada()
     
-    tr = etree.SubElement(impuestos_table, "tr")
-    for field in ["Base", "Impuesto", "TipoFactor", "TasaOCuota", "Importe"]:
-        td = etree.SubElement(tr, "td")
-        etree.SubElement(td, "{http://www.w3.org/1999/XSL/Transform}value-of", select=f"FacturaElectronica/Conceptos/Concepto/Impuestos/Traslados/Traslado/{field}")
+    for _, row in df.iterrows():
+        # Crear el documento XML
+        xml_factura = template.generate_xml(row.to_dict())
+        
+        # Agregar la instrucción de procesamiento XSL
+        xml_con_xsl = f'<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="factura_style.xsl"?>\n{xml_factura}'
+        
+        nombre_archivo = f"factura_{row['ID de Factura']}.xml"
+        with open(nombre_archivo, "w", encoding="utf-8") as f:
+            f.write(xml_con_xsl)
+        print(f"Factura generada: {nombre_archivo}")
 
-    # Total
-    total_p = etree.SubElement(body, "p", attrib={"class": "total"})
-    total_p.text = "Total: $"
-    etree.SubElement(total_p, "{http://www.w3.org/1999/XSL/Transform}value-of", select="FacturaElectronica/Comprobante/Total")
 
-    xslt_tree = etree.ElementTree(xslt_root)
-    xslt_filename = "factura_style.xslt"
-    xslt_tree.write(xslt_filename, pretty_print=True, xml_declaration=True, encoding='utf-8')
+def generar_factura_xml(fila):
+    template = crear_plantilla_personalizada()
     
-    return xslt_filename
+    # Crear el documento XML
+    xml_factura = template.generate_xml(fila.to_dict())
+    
+    # Agregar la instrucción de procesamiento XSL (si es necesario)
+    xml_con_xsl = f'<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="factura_style.xsl"?>\n{xml_factura}'
+    
+    nombre_archivo = f"factura_{fila['ID de Factura']}.xml"
+    with open(nombre_archivo, "w", encoding="utf-8") as f:
+        f.write(xml_con_xsl)
+    
+    print(f"Factura generada: {nombre_archivo}")
 
-# Cargar los datos
-df = load_data()
 
-# Generar una factura XML para la primera venta
-sale = df.iloc[0]
-xml_filename = generate_xml_invoice(sale)
+def crear_xsl_basico():
+    xsl_content = """<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:template match="/">
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; }
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background-color: #f2f2f2; }
+        </style>
+      </head>
+      <body>
+        <h1>Factura</h1>
+        <xsl:apply-templates/>
+      </body>
+    </html>
+  </xsl:template>
+  
+  <xsl:template match="*">
+    <h2><xsl:value-of select="name()"/></h2>
+    <table>
+      <xsl:for-each select="*">
+        <tr>
+          <th><xsl:value-of select="name()"/></th>
+          <td><xsl:value-of select="text()"/></td>
+        </tr>
+      </xsl:for-each>
+    </table>
+  </xsl:template>
+</xsl:stylesheet>
+"""
+    with open("factura_style.xsl", "w", encoding="utf-8") as f:
+        f.write(xsl_content)
+    print("Archivo XSL básico creado: factura_style.xsl")
 
-# Crear el archivo XSLT
-xslt_filename = create_xslt()
+if __name__ == "__main__":
+    # Cargar los datos
+    df = load_data()
+    
+    # Crear el archivo XSL básico
+    crear_xsl_basico()
 
-print(f"Factura XML generada: {xml_filename}")
-print(f"Archivo XSLT generado: {xslt_filename}")
-
-# Añadir referencia al XSLT en el XML
-parser = etree.XMLParser(remove_blank_text=True)
-tree = etree.parse(xml_filename, parser)
-xslt_pi = etree.ProcessingInstruction("xml-stylesheet", f'type="text/xsl" href="{xslt_filename}"')
-tree.getroot().addprevious(xslt_pi)
-tree.write(xml_filename, pretty_print=True, xml_declaration=True, encoding='utf-8')
-
-print("Referencia XSLT añadida al XML. Ahora puedes abrir el XML en un navegador para una mejor visualización.")
+    # Generar una factura XML para la primera venta
+    sale = df.iloc[0]
+    
+    # Generar las facturas XML
+    #generar_facturas_xml(df)
+    generar_factura_xml(sale)
+    
+    #print(f"Proceso completado. Se han generado {len(df)} facturas XML con referencia a XSL.")
+    print(f"Proceso completado. Se han generado factura XML con referencia a XSL.")
