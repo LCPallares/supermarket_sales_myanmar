@@ -1,0 +1,892 @@
+import pandas as pd
+from datetime import datetime
+
+# Métricas Básicas de Ventas
+print("\n" + "="*50)
+print("📊 MÉTRICAS CLAVE DE VENTAS".center(50))
+print("="*50)
+print(f"💰 Ventas Totales: ${df['total'].sum():,.2f}")
+print(f"🛒 Transacciones Totales: {len(df):,}")
+print(f"📦 Unidades Vendidas: {df['quantity'].sum():,}")
+print(f"🏷️ Ticket Promedio: ${df['total'].mean():,.2f}")
+print(f"📈 Venta Máxima: ${df['total'].max():,.2f} (ID: {df.loc[df['total'].idxmax(), 'invoice_id']})")
+
+# Métricas de Rentabilidad
+print("\n" + "="*50)
+print("💵 MÉTRICAS DE RENTABILIDAD".center(50))
+print("="*50)
+print(f"📉 Costo de Ventas: ${df['cogs'].sum():,.2f}")
+print(f"🔼 Margen Bruto Total: ${df['gross_income'].sum():,.2f}")
+print(f"📊 Margen Bruto %: {df['gross_income'].sum()/df['total'].sum()*100:.2f}%")
+print(f"📌 Margen Promedio por Transacción: ${df['gross_income'].mean():,.2f}")
+
+# Métricas Temporales
+print("\n" + "="*50)
+print("⏳ MÉTRICAS TEMPORALES".center(50))
+print("="*50)
+date_range = df['datetime'].max() - df['datetime'].min()
+print(f"🕰️ Período Analizado: {df['datetime'].min().strftime('%d/%m/%Y')} - {df['datetime'].max().strftime('%d/%m/%Y')} ({date_range.days} días)")
+print(f"⏱️ Transacciones/Día: {len(df)/date_range.days:,.1f}")
+print(f"🕒 Hora Pico: {df['datetime'].dt.hour.mode()[0]}:00 - {df['datetime'].dt.hour.mode()[0]+1}:00")
+
+# Métricas por Sucursal
+print("\n" + "="*50)
+print("🏪 DESEMPEÑO POR SUCURSAL".center(50))
+print("="*50)
+branch_stats = df.groupby('branch').agg({
+    'total': ['sum', 'mean', 'count'],
+    'gross_income': 'mean'
+})
+branch_stats.columns = ['Ventas Totales', 'Ticket Promedio', 'Transacciones', 'Margen Promedio']
+print(branch_stats.sort_values('Ventas Totales', ascending=False).to_string(formatters={
+    'Ventas Totales': '${:,.2f}'.format,
+    'Ticket Promedio': '${:,.2f}'.format,
+    'Margen Promedio': '${:,.2f}'.format
+}))
+
+# Métricas por Línea de Producto
+print("\n" + "="*50)
+print("🛍️ DESEMPEÑO POR CATEGORÍA".center(50))
+print("="*50)
+product_stats = df.groupby('product_line').agg({
+    'total': ['sum', 'mean'],
+    'quantity': 'sum',
+    'gross_income': 'sum'
+})
+product_stats.columns = ['Ventas Totales', 'Ticket Promedio', 'Unidades', 'Margen Bruto']
+print(product_stats.sort_values('Ventas Totales', ascending=False).to_string(formatters={
+    'Ventas Totales': '${:,.2f}'.format,
+    'Ticket Promedio': '${:,.2f}'.format,
+    'Margen Bruto': '${:,.2f}'.format
+}))
+
+# Eficiencia Operativa
+print("\n" + "="*50)
+print("⚙️ EFICIENCIA OPERATIVA".center(50))
+print("="*50)
+payment_stats = df['payment_method'].value_counts(normalize=True)*100
+print("💳 Mix de Métodos de Pago:")
+print(payment_stats.to_string(header=False, formatters={'': '{:.1f}%'.format}))
+print(f"\n👥 Mix de Clientes: Miembros {df['customer_type'].value_counts(normalize=True)['Member']*100:.1f}%")
+
+
+
+
+
+
+
+
+
+
+
+# Eficiencia Operativa
+print("\n" + "="*50)
+print("⚙️ EFICIENCIA OPERATIVA".center(50))
+print("="*50)
+
+# Métodos de Pago (con protección si hay valores nulos)
+payment_stats = df['payment_method'].value_counts(normalize=True).mul(100).round(1)
+print("\n💳 Distribución de Métodos de Pago:")
+for method, percent in payment_stats.items():
+    print(f"  • {method.ljust(12)}: {percent:.1f}%")
+
+# Mix de Clientes (con verificación de clave)
+customer_mix = df['customer_type'].value_counts(normalize=True).mul(100)
+member_percent = customer_mix.get('Member', 0)  # Evita KeyError si no hay 'Member'
+non_member_percent = customer_mix.get('Normal', 0)
+print(f"\n👥 Mix de Clientes:")
+print(f"  • Miembros    : {member_percent:.1f}%")
+print(f"  • No miembros : {non_member_percent:.1f}%")
+
+# Tasa de transacciones por hora pico (valor adicional)
+peak_hour = df['datetime'].dt.hour.mode()[0]
+transactions_peak = df[df['datetime'].dt.hour == peak_hour].shape[0]
+print(f"\n⏱️ Hora Pico: {peak_hart}:00 ({transactions_peak} transacciones)")
+
+
+
+# Eficiencia Operativa
+print("\n" + "="*50)
+print("⚙️ EFICIENCIA OPERATIVA".center(50))
+print("="*50)
+
+# Métodos de Pago (versión corregida)
+payment_stats = df['payment_method'].value_counts(normalize=True) * 100
+print("💳 Mix de Métodos de Pago:")
+print(payment_stats.round(1).astype(str) + '%')  # Formato directo sin 'formatters'
+
+# Mix de Clientes (versión corregida)
+customer_mix = df['customer_type'].value_counts(normalize=True) * 100
+print(f"\n👥 Mix de Clientes: Miembros {customer_mix.get('Member', 0):.1f}%")
+
+
+
+print("💳 Mix de Métodos de Pago:")
+print("----------------------------")
+for method, percent in payment_stats.round(1).items():
+    print(f"{method.ljust(12)}: {percent}%")
+
+
+
+# Convertir a DataFrame temporal
+payment_df = payment_stats.reset_index()
+payment_df.columns = ['Método', 'Porcentaje']
+print(payment_df.to_string(formatters={'Porcentaje': '{:.1f}%'.format}, index=False))
+
+
+
+'''
+# Agregar porcentajes a la consulta
+SELECT 
+    "Customer type" AS tipo_cliente,
+    Gender AS genero,
+    SUM(Total) AS ventas_totales,
+    SUM(Total) * 100.0 / (SELECT SUM(Total) FROM '../data/supermarket_sales.csv') AS porcentaje
+FROM '../data/supermarket_sales.csv'
+GROUP BY "Customer type", Gender
+'''
+
+
+# Pandas
+ventas_tipo_genero = df.groupby(['customer_type', 'gender'])['total'].sum().unstack()
+fig_tipo_genero = px.bar(ventas_tipo_genero, title='Ventas por Tipo de Cliente y Género', barmode='group')
+fig_tipo_genero.show()
+
+
+import duckdb
+import plotly.express as px
+
+# DuckDB
+query = """
+SELECT 
+    customer_type,
+    gender,
+    SUM(total) AS ventas_totales
+FROM df  # DuckDB puede leer directamente DataFrames de Pandas
+GROUP BY customer_type, gender
+"""
+
+# Ejecutar y dar formato idéntico al de Pandas
+ventas_tipo_genero = con.execute(query).fetchdf().pivot(
+    index='customer_type',
+    columns='gender',
+    values='ventas_totales'
+)
+
+# Gráfico idéntico al original
+fig_tipo_genero = px.bar(
+    ventas_tipo_genero, 
+    title='Ventas por Tipo de Cliente y Género',
+    barmode='group'
+)
+fig_tipo_genero.show()
+
+
+
+
+query = """
+SELECT 
+    customer_type,
+    SUM(CASE WHEN gender = 'Male' THEN total ELSE 0 END) AS Male,
+    SUM(CASE WHEN gender = 'Female' THEN total ELSE 0 END) AS Female
+FROM df
+GROUP BY customer_type
+"""
+ventas_tipo_genero = con.execute(query).fetchdf()
+
+
+
+
+# Cuando el CSV es grande (>100MB)
+query = """
+SELECT * 
+FROM '../data/supermarket_sales.csv'
+LIMIT 5  # Ejemplo: preview rápido sin cargar todo en Pandas
+"""
+con.execute(query).fetchdf()
+
+
+# Cuando ya tienes un DataFrame pequeño/mediano
+df = pd.read_csv('../data/supermarket_sales.csv', nrows=1000)  # Ejemplo: carga parcial
+
+query = """
+SELECT 
+    customer_type,
+    AVG(total) as avg_spent
+FROM df
+GROUP BY customer_type
+"""
+con.execute(query).fetchdf()
+
+
+Recomendación para Jupyter Notebook:
+Escenario	Mejor Opción
+Datos grandes (>100MB)	FROM 'archivo.csv'
+Datos pequeños (<100MB)	FROM df
+Ya tienes el DataFrame en memoria	FROM df
+Quieres evitar cargar todo en RAM	FROM 'archivo.csv'
+Trabajas en Colab/Kaggle	FROM df
+
+
+# Carga inicial con DuckDB (eficiente)
+query = """
+SELECT *
+FROM '../data/supermarket_sales.csv'
+WHERE Branch = 'A'  # Filtro temprano
+"""
+df_filtrado = con.execute(query).fetchdf()
+
+# Análisis posterior con Pandas+DuckDB
+ventas = con.execute("""
+    SELECT gender, SUM(total) 
+    FROM df_filtrado 
+    GROUP BY gender
+""").fetchdf()
+
+
+# Celda 1: Configuración
+DUCKDB_PATH = '../data/supermarket_sales.csv'  # Facilita cambios
+
+# Celda 2: Consulta
+query = f"""
+SELECT *
+FROM '{DUCKDB_PATH}'
+"""
+
+
+
+
+
+import pandas as pd
+
+# Cargar datos
+df = pd.read_csv('supermarket_sales.csv')
+
+# Convertir a datetime (mm/dd/yyyy)
+df['fecha_hora'] = pd.to_datetime(
+    df['date'] + ' ' + df['time'],
+    format='%m/%d/%Y %H:%M'
+)
+
+# Extraer componentes
+df['dia'] = df['fecha_hora'].dt.day
+df['mes'] = df['fecha_hora'].dt.month
+df['año'] = df['fecha_hora'].dt.year
+
+print(df[['date', 'time', 'fecha_hora']].head())
+
+
+
+
+
+
+# Orden personalizado de días
+dias_orden = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+
+# Convertir a Categorical para mantener el orden
+sales_heatmap['dia_semana'] = pd.Categorical(
+    sales_heatmap['dia_semana'],
+    categories=dias_orden,
+    ordered=True
+)
+
+# Pivotear asegurando el orden
+heatmap_data = sales_heatmap.pivot(
+    index="dia_semana", 
+    columns="hora", 
+    values="ventas"
+).sort_index(level='dia_semana')
+
+# Configuración visual
+plt.figure(figsize=(14, 8))
+sns.set(font_scale=1.1)
+
+# Heatmap profesional
+ax = sns.heatmap(
+    heatmap_data,
+    cmap='YlGnBu',
+    annot=True,
+    fmt='.0f',
+    linewidths=0.5,
+    linecolor='white',
+    cbar_kws={'label': 'Ventas ($)', 'shrink': 0.8},
+    annot_kws={'size': 9}
+)
+
+# Personalización
+plt.title('Patrón de Ventas: Hora vs Día de la Semana', pad=20, fontsize=14)
+plt.xlabel('Hora del Día', labelpad=10)
+plt.ylabel('Día de la Semana', labelpad=10)
+
+# Ajustar ticks de horas
+#hour_ticks = range(0, 24, 2)  # Mostrar horas pares
+#plt.xticks(ticks=[h+0.5 for h in hour_ticks], labels=hour_ticks)
+
+# Resaltar franjas horarias clave
+ax.add_patch(plt.Rectangle((8.5, 0), width=3, height=7, fill=False, edgecolor='red', lw=2, clip_on=False))
+ax.text(10, -0.5, 'Horario Comercial', ha='center', va='center', color='red')
+
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```markdown
+# Análisis de Ventas - Supermarket Sales
+
+## 1. Configuración Inicial
+```python
+# Librerías
+import pandas as pd
+import duckdb
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Configuración visual
+plt.style.use('seaborn')
+```
+
+## 2. Carga de Datos
+```python
+# Opción 1: Desde pandas
+df = pd.read_csv('../data/supermarket_sales.csv')
+
+# Opción 2: Desde DuckDB
+con = duckdb.connect()  # Conexión en memoria
+```
+
+## 3. Análisis Exploratorio
+
+### 3.1. Ventas por Hora/Día
+```python
+# Heatmap de ventas por hora y día
+```
+
+### 3.2. Patrones por Género
+```python
+# Productos preferidos por género
+# Métodos de pago por género
+```
+
+## 4. Análisis por Segmentos
+
+### 4.1. Tipo de Cliente (Member/Normal)
+```python
+# Comparación de tickets promedio
+# Frecuencia de compras
+```
+
+### 4.2. Rating de Estratificación
+```python
+# Correlación con fecha y ticket
+```
+
+## 5. Análisis de Productos
+
+### 5.1. Margen Bruto
+```python
+# Productos con mayor margen
+# Identificación de outliers
+```
+
+### 5.2. Análisis de Canasta
+```python
+# Combinaciones frecuentes
+```
+
+## 6. Hipótesis Estadísticas
+```python
+# Test t-Student: Members vs Normals
+# Chi-cuadrado: Género vs Método de pago
+```
+
+## 7. Exportación de Resultados
+```python
+# Guardar tablas/gráficos relevantes
+```
+```
+
+
+
+
+
+
+
+
+
+
+
+
+```markdown
+# 📊 Análisis de Ventas - Supermarket Sales
+
+## 1. 🔧 Configuración Inicial
+```python
+# Importar librerías y conexión DuckDB
+```
+
+## 2. 🗃️ Carga y Preparación de Datos
+```python
+# Desde CSV a Pandas/DuckDB
+```
+
+## 3. 🕒 Análisis Temporales
+
+### 3.1. Ventas por Hora del Día
+```python
+# Picos horarios y relación con tipo de cliente/género
+```
+
+### 3.2. Ventas por Día de la Semana
+```python
+# Heatmap día vs hora
+# Evolución semanal
+```
+
+### 3.3. Cohortes (Retención)
+```python
+# Análisis de retención por mes
+```
+
+## 4. 👥 Segmentación de Clientes
+
+### 4.1. Tipo de Cliente (Member/Normal)
+```python
+# Ticket promedio y frecuencia
+```
+
+### 4.2. Género
+```python
+# Preferencias de producto y pago
+```
+
+### 4.3. Rating de Estratificación
+```python
+# Correlación con comportamiento
+```
+
+## 5. 🏷️ Análisis de Productos
+
+### 5.1. Margen Bruto
+```python
+# Productos más rentables
+```
+
+### 5.2. Market Basket Analysis
+```python
+# Combinaciones frecuentes
+```
+
+## 6. 🏪 Análisis por Sucursal
+
+### 6.1. Comparativo Branch/City
+```python
+# Métricas clave por ubicación
+```
+
+## 7. 🔍 Validación de Hipótesis
+
+### 7.1. Members vs Normals
+```python
+# Test t-Student
+```
+
+### 7.2. Género vs Payment
+```python
+# Test Chi-cuadrado
+```
+
+## 8. 💾 Exportación de Resultados
+```python
+# Gráficos y tablas clave
+```
+```
+
+
+
+
+
+
+
+
+```markdown
+# 🛒 Supermarket Sales - Análisis Integral
+
+## 1. ⚙️ Configuración
+```python
+# Librerías (pandas, duckdb, seaborn, matplotlib)
+# Conexión DuckDB 
+# Parámetros visuales
+```
+
+## 2. 📂 Carga y Preprocesamiento
+```python
+# Carga desde CSV (Pandas/DuckDB)
+# Limpieza básica (missings, duplicados)
+```
+
+## 3. 🔍 EDA (Análisis Exploratorio)
+
+### 3.1. Resumen Estadístico
+```python
+# describe() de variables numéricas
+# value_counts() de categóricas
+```
+
+### 3.2. Distribuciones Clave
+```python
+# Histogramas: Total, Quantity, Gross income
+# Boxplots: Total por Branch/City
+```
+
+### 3.3. Correlaciones Iniciales
+```python
+# Matriz de correlación (Total, Quantity, Gross margin %)
+```
+
+## 4. 🕰️ Análisis Temporales
+
+### 4.1. Patrones Horarios
+```python
+# Heatmap hora vs día (nuestro análisis inicial)
+# Picos por tipo de cliente
+```
+
+### 4.2. Tendencia Semanal/Mensual
+```python
+# Ventas por día de semana
+# Cohortes (retention rate)
+```
+
+## 5. 👥 Segmentación
+
+### 5.1. Por Tipo de Cliente
+```python
+# Member vs Normal (ticket, frecuencia)
+```
+
+### 5.2. Por Género
+```python
+# Métodos de pago (Chi-cuadrado)
+# Productos preferidos
+```
+
+## 6. 📦 Análisis de Productos
+
+### 6.1. Performance
+```python
+# Margen bruto por línea
+# Outliers de rentabilidad
+```
+
+### 6.2. Asociaciones
+```python
+# Market Basket Analysis (combinaciones frecuentes)
+```
+
+## 7. 🌍 Geográfico
+
+### 7.1. Por Sucursal
+```python
+# Ventas totales, ticket promedio
+```
+
+### 7.2. Por Ciudad
+```python
+# Diferencias en preferencias
+```
+
+## 8. 🔬 Validación Estadística
+```python
+# Tests de hipótesis (t-test, chi2)
+```
+
+## 9. 📊 Visualización
+```python
+# Exportar gráficos clave (PNG/HTML)
+```
+
+## 10. 📝 Conclusiones
+```markdown
+### Insights Principales:
+1. "Pico de ventas a las 14:00 (25% sobre promedio)"
+2. "Members gastan 12% más pero misma frecuencia"
+3. "Electrónicos con mayor margen (28.5%)"
+
+### Recomendaciones:
+- Promociones horarias en picos
+- Bundles para productos frecuentemente combinados
+```
+```
+
+
+
+
+
+
+
+
+
+
+
+
+```markdown
+# 🛒 Supermarket Sales - Análisis Estadístico Completo
+
+## 1. ⚙️ Configuración 
+```python
+# Librerías (pandas, duckdb, seaborn, scipy)
+```
+
+## 2. 📂 Datos
+```python
+# Carga y limpieza inicial
+```
+
+## 3. 📊 Análisis Descriptivo (EDA+)
+
+### 3.1. Estadísticos Básicos
+```python
+# describe() + skew(), kurtosis()
+# value_counts() normalizados
+```
+
+### 3.2. Visualización Univariada
+```python
+# Distribuciones (histogramas + boxplots)
+# Diagramas de barras para categóricas
+```
+
+### 3.3. Visualización Multivariada
+```python
+# Matriz de correlación
+# Pairplots selectivos
+```
+
+## 4. 🔎 Análisis Inferencial
+
+### 4.1. Comparación de Grupos
+```python
+# t-test: Member vs Normal (Total)
+# ANOVA: Rating vs Ticket promedio
+```
+
+### 4.2. Asociación entre Variables
+```python
+# Chi-cuadrado: Género vs Payment
+# Correlación de Spearman: Rating vs Frecuencia
+```
+
+### 4.3. Modelos Sencillos
+```python
+# Regresión lineal: Total ~ Quantity + Product line
+```
+
+## 5. 🕰️ Análisis Temporales
+```python
+# (Heatmaps, tendencias, cohortes)
+```
+
+## 6. 👥 Segmentación Avanzada
+```python
+# (RFM proxy, clustering básico)
+```
+
+## 7. 📝 Reporte Estadístico
+```python
+# Tablas resumen con:
+# - p-values
+# - Tamaños de efecto
+# - Intervalos de confianza
+```
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+news_columns = {
+    'Invoice ID': 'invoice_id',
+    'Branch': 'branch',
+    'City': 'city',
+    'Customer type': 'customer_type',
+    'Gender': 'gender',
+    'Product line': 'product_line',
+    'Unit price': 'unit_price',
+    'Quantity': 'quantity',
+    'Tax 5%': 'tax_5_percent',
+    'Total': 'total',
+    'Date': 'date',
+    'Time': 'time',
+    'Payment': 'payment_method',
+    'Cost of goods sold': 'cost_of_goods_sold',
+    'Gross margin percentage': 'gross_margin_percentage',
+    'Gross income': 'gross_income',
+    'Customer stratification rating': 'customer_rating'
+}
+df = df.rename(columns=news_columns)
+
+Invoice ID → ID de Factura
+Branch → Sucursal
+City → Ciudad
+Customer type → Tipo de Cliente
+Gender → Género
+Product line → Línea de Producto
+Unit price → Precio Unitario
+Quantity → Cantidad
+Tax 5% → Impuesto 5%
+Total → Total
+Date → Fecha
+Time → Hora
+Payment → Método de Pago
+Cost of goods sold → Costo de Bienes Vendidos
+Gross margin percentage → Porcentaje de Margen Bruto
+Gross income → Ingreso Bruto
+Customer stratification rating → Calificación de Estratificación del Cliente
+
+
+
+
+
+margin_query = """
+SELECT
+    "Product line",
+    SUM("Total") AS Revenue,
+    SUM("Cost of goods sold") AS Cost,
+    SUM("Total" - "Cost of goods sold") AS Profit,
+    ROUND((SUM("Total" - "Cost of goods sold") / SUM("Total")) * 100, 2) AS Profit_Margin_Percent
+FROM df
+GROUP BY "Product line"
+ORDER BY Profit_Margin_Percent DESC
+"""
+margin_result = con.execute(margin_query).fetchdf()
+margin_result
+
+
+margen_query = """
+SELECT 
+    "Product line",
+    AVG("Gross margin percentage") AS margen_promedio,
+    SUM("Gross income") AS ingreso_bruto_total,
+    COUNT(*) AS transacciones,
+    AVG("Total") AS ticket_promedio
+FROM df
+GROUP BY "Product line"
+ORDER BY ingreso_bruto_total DESC
+"""
+margen_data = duckdb.execute(margen_query).fetchdf()
+margen_data
+
+
+
+# Consulta para análisis de márgenes
+margen_query = """
+SELECT 
+    "Product line",
+    SUM("Total") AS Revenue,
+    SUM("Cost of goods sold") AS Cost,
+    SUM("Gross income") AS ingreso_bruto_total,
+    COUNT(*) AS transacciones,
+    AVG("Total") AS ticket_promedio,
+    AVG("Gross margin percentage") AS margen_promedio,
+    SUM("Total" - "Cost of goods sold") AS Profit,
+    ROUND((SUM("Total" - "Cost of goods sold") / SUM("Total")) * 100, 2) AS Profit_Margin_Percent
+FROM df
+GROUP BY "Product line"
+ORDER BY ingreso_bruto_total DESC
+"""
+margen_data = duckdb.execute(margen_query).fetchdf()
+margen_data
+
+
+
+
+
+
+
+# Configuración visual
+#plt.style.use('seaborn')
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+
+# Gráfico 1: Margen vs Ingreso bruto
+scatter = sns.scatterplot(
+    data=margen_data,
+    x="margen_promedio",
+    y="ingreso_bruto_total",
+    hue="Product line",
+    size="transacciones",
+    sizes=(100, 500),
+    palette="viridis",
+    ax=ax1
+)
+ax1.set_title('Margen Bruto vs Ingreso por Línea de Producto')
+ax1.set_xlabel('Margen Promedio (%)')
+ax1.set_ylabel('Ingreso Bruto Total ($)')
+ax1.grid(True, linestyle='--', alpha=0.6)
+
+# Gráfico 2: Distribución de márgenes
+boxplot = sns.boxplot(
+    data=margen_data,
+    y="margen_promedio",
+    x=0,  # Truco para boxplot horizontal
+    width=0.4,
+    palette="pastel",
+    ax=ax2
+)
+ax2.set_title('Distribución de Márgenes por Producto')
+ax2.set_xlabel('')
+ax2.set_ylabel('Margen Promedio (%)')
+ax2.grid(True, linestyle='--', alpha=0.6)
+ax2.get_xaxis().set_visible(False)  # Ocultar eje x innecesario
+
+# Detección de outliers estadísticos
+Q1 = margen_data["margen_promedio"].quantile(0.25)
+Q3 = margen_data["margen_promedio"].quantile(0.75)
+IQR = Q3 - Q1
+outliers = margen_data[
+    (margen_data["margen_promedio"] < (Q1 - 1.5 * IQR)) | 
+    (margen_data["margen_promedio"] > (Q3 + 1.5 * IQR))
+]
+
+# Resaltar outliers en el gráfico
+for idx, row in outliers.iterrows():
+    ax1.annotate(
+        row["Product line"],
+        (row["margen_promedio"], row["ingreso_bruto_total"]),
+        xytext=(10, 10),
+        textcoords='offset points',
+        bbox=dict(boxstyle='round,pad=0.5', fc='red', alpha=0.3)
+    )
+
+plt.tight_layout()
+plt.show()
+
+
+
+
+
