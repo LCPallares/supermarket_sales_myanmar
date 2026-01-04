@@ -1,6 +1,10 @@
 import pandas as pd
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import barcode
+from barcode.writer import SVGWriter, ImageWriter
+from io import BytesIO
+import base64
 
 def load_data():
     df = pd.read_csv("supermarket_Sales.csv")
@@ -26,6 +30,16 @@ def load_data():
     df = df.rename(columns=columnas_traducidas)
     df['Fecha'] = pd.to_datetime(df['Fecha'])
     return df
+
+def generate_barcode(invoice_id):
+    code128 = barcode.get_barcode_class('code128')
+    buffer = BytesIO()
+    code128(invoice_id, writer=ImageWriter()).write(buffer)
+    
+    # Convert to base64
+    buffer.seek(0)
+    encoded_string = base64.b64encode(buffer.getvalue()).decode()
+    return encoded_string
 
 class XMLInvoiceTemplate:
     def __init__(self):
@@ -59,6 +73,7 @@ def crear_plantilla_personalizada():
     template.add_element("Encabezado/IDFactura", "ID de Factura")
     template.add_element("Encabezado/Fecha", "Fecha")
     template.add_element("Encabezado/Hora", "Hora")
+    template.add_element("Encabezado/CodigoBarras", "Codigo de Barras")
     
     template.add_element("InformacionCliente/Tipo", "Tipo de Cliente")
     template.add_element("InformacionCliente/Genero", "Género")
@@ -83,8 +98,15 @@ def crear_plantilla_personalizada():
 def generar_factura_xml(fila):
     template = crear_plantilla_personalizada()
     
+    # Generar el código de barras
+    barcode_png = generate_barcode(str(fila['ID de Factura']))
+    
+    # Añadir el código de barras a los datos
+    datos = fila.to_dict()
+    datos['Codigo de Barras'] = barcode_png
+    
     # Crear el documento XML
-    xml_factura = template.generate_xml(fila.to_dict())
+    xml_factura = template.generate_xml(datos)
     
     # Crear el documento XML completo con la declaración XML y la referencia XSL
     xml_completo = f'''<?xml version="1.0" encoding="UTF-8"?>
@@ -111,6 +133,18 @@ def crear_xsl_basico():
             padding: 20px;
             background-color: #f0f0f0;
           }
+
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          }
+          .barcode {
+            width: 200px;
+            height: auto;
+          }
+
           .invoice {
             background-color: white;
             border-radius: 5px;
@@ -151,8 +185,20 @@ def crear_xsl_basico():
         </style>
       </head>
       <body>
+
         <div class="invoice">
-          <h1>Factura #<xsl:value-of select="Factura/Encabezado/IDFactura"/></h1>
+          <div class="header">
+            <h1>Factura #<xsl:value-of select="Factura/Encabezado/IDFactura"/></h1>
+            <div class="barcode">
+              <img>
+                <xsl:attribute name="src">
+                  <xsl:text>data:image/png;base64,</xsl:text>
+                  <xsl:value-of select="Factura/Encabezado/CodigoBarras"/>
+                </xsl:attribute>
+                <xsl:attribute name="alt">Código de Barras</xsl:attribute>
+              </img>
+            </div>
+          </div>
           
           <div class="section">
             <div class="section-title">Información General</div>
