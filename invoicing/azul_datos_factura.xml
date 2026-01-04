@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura>
+    <cabecera>
+        <invoice_id>750-67-8428</invoice_id>
+        <sucursal>A</sucursal>
+        <ciudad>Yangon</ciudad>
+        <fecha>2019-01-05</fecha>
+        <hora>13:08</hora>
+    </cabecera>
+    
+    <cliente>
+        <tipo>Member</tipo>
+        <genero>Female</genero>
+        <rating>9.1</rating>
+    </cliente>
+    
+    <venta>
+        <producto>
+            <linea>Health and beauty</linea>
+            <precio_unitario>74.69</precio_unitario>
+            <cantidad>7</cantidad>
+            <impuesto>26.1415</impuesto>
+            <total>548.9715</total>
+        </producto>
+        <metodo_pago>Ewallet</metodo_pago>
+        <costo_bienes>522.83</costo_bienes>
+        <margen_porcentaje>4.761904762</margen_porcentaje>
+        <ingreso_bruto>26.1415</ingreso_bruto>
+    </venta>
+</factura>

@@ -1,0 +1,609 @@
+﻿<HTML xmlns:dt="http://www.w3.org/2001/XMLSchema-instance" xmlns:d2="urn:schemas-microsoft-com:datatypes">
+  <HEAD>
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <STYLE>
+          
+    body {font-family:Courier New;font-size:10pt;margin-right:1.5em;background:AliceBlue}
+    .c{ }
+    .m{color:#505050}                   /* markup */
+    .b{color:red;font-weight:bold;text-decoration:none}  /* non breaking space */
+    .e{margin-left:1em;text-indent:-1em;margin-right:1em}  /* expandable */
+    .k{margin-left:1em;text-indent:-1em;margin-right:1em}  /* outer comment (non-expandable)? */
+    .at{color:Maroon}          /* attribute name */
+    .av {color:Black;}       /* attribute value */
+    .t {color:#004080}                 /* element name */
+    .tx{color:Black}   /* text content */
+    .pi{color:Purple}                      /* pi name and content */
+    .ci{color:Green}                 /* comment value */    
+    .side{background-color:#FFFACD}   /* intro div */    
+    .outputtip { display:block }
+    a { color:#004080 }
+    a:visited { color:Purple }
+    a:hover { color:Purple }
+    pre {margin:0px;display:inline}
+        </STYLE>
+  </HEAD>
+  <BODY class="st">
+    <div style="padding:5px;" class="side tx">
+          
+            Your XML document contains no xml-stylesheet processing instruction. To provide
+            an <a href="https://www.tutorialspoint.com/xslt/index.htm" target="_new">XSLT transform</a>, add the following to the top of your file and edit the href
+            attribute accordingly:
+
+            <pre><span class="m">&lt;?</span><span class="pi">xml-stylesheet</span> <span class="at">type</span><span class="m">="</span><span class="av">text/xsl</span><span class="m">" </span><span class="at">href</span><span class="m">="</span><span class="av">stylesheet.xsl</span><span class="m">" ?&gt;</span></pre>
+      <p>
+            You can also enter the XSLT file name using the above "XSLT Location:" text box, but this will not
+            persist with your XML document.
+          </p>
+      <div class="outputtip">
+            You can specify a default output file name using the following in your XML documents:
+            <pre><span class="m">&lt;?</span><span class="pi">xsl-output</span> <span class="at">default</span><span class="m">="</span><span class="av">xslt_output</span><span class="m">" ?&gt;</span></pre>
+      </div>
+    </div>
+    <div class="e">
+      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">xsl:stylesheet</span> 
+    <span class="at">version</span><span class="m">="</span><span class="av">1.0</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+      <div>
+        <div class="e">
+          <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">xsl:template</span> 
+    <span class="at">match</span><span class="m">="</span><span class="av">/</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+          <div>
+            <div class="e">
+              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">html</span><span class="m">&gt;</span></div>
+              <div>
+                <div class="e">
+                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">head</span><span class="m">&gt;</span></div>
+                  <div>
+                    <div class="e">
+                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">style</span><span class="m">&gt;</span><span class="tx">
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+          }
+
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          }
+          .barcode {
+            width: 200px;
+            height: auto;
+          }
+
+          .invoice {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+          }
+          h1 {
+            color: #333;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+          }
+          .section {
+            margin-bottom: 20px;
+          }
+          .section-title {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background-color: #f2f2f2;
+          }
+          .highlight {
+            font-weight: bold;
+            color: #007bff;
+          }
+        </span><span class="m">&lt;/</span><span class="t">style</span><span class="m">&gt;</span></div>
+                    </div>
+                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">head</span><span class="m">&gt;</span></div>
+                  </div>
+                </div>
+                <div class="e">
+                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">body</span><span class="m">&gt;</span></div>
+                  <div>
+                    <div class="e">
+                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">invoice</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                      <div>
+                        <div class="e">
+                          <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">header</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                          <div>
+                            <div class="e">
+                              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">h1</span> 
+    <span class="at">style</span><span class="m">="</span><span class="av">margin: 0;</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                              <div>Factura #<div class="e">
+                                  <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/Encabezado/IDFactura</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                </div>
+                                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">h1</span><span class="m">&gt;</span></div>
+                              </div>
+                            </div>
+                            <div class="e">
+                              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">barcode</span><span class="m">"</span>
+   
+    <span class="at">style</span><span class="m">="</span><span class="av">margin-left: auto;</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                              <div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">img</span> 
+    <span class="at">style</span><span class="m">="</span><span class="av">width: 200px; height: auto;</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">xsl:attribute</span> 
+    <span class="at">name</span><span class="m">="</span><span class="av">src</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:text</span><span class="m">&gt;</span><span class="tx">data:image/png;base64,</span><span class="m">&lt;/</span><span class="t">xsl:text</span><span class="m">&gt;</span></div>
+                                        </div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/Encabezado/CodigoBarras</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">xsl:attribute</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:attribute</span> 
+    <span class="at">name</span><span class="m">="</span><span class="av">alt</span><span class="m">"</span>
+  <span class="m">&gt;</span><span class="tx">Código de Barras</span><span class="m">&lt;/</span><span class="t">xsl:attribute</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">img</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                              </div>
+                            </div>
+                            <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                          </div>
+                        </div>
+                        <div class="e">
+                          <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                          <div>
+                            <div class="e">
+                              <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section-title</span><span class="m">"</span>
+  <span class="m">&gt;</span><span class="tx">Información General</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                            </div>
+                            <div class="e">
+                              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              <div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Fecha</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/Encabezado/Fecha</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Hora</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/Encabezado/Hora</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              </div>
+                            </div>
+                            <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                          </div>
+                        </div>
+                        <div class="e">
+                          <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                          <div>
+                            <div class="e">
+                              <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section-title</span><span class="m">"</span>
+  <span class="m">&gt;</span><span class="tx">Información del Cliente</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                            </div>
+                            <div class="e">
+                              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              <div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Tipo de Cliente</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionCliente/Tipo</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Género</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionCliente/Genero</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Calificación</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionCliente/Calificacion</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              </div>
+                            </div>
+                            <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                          </div>
+                        </div>
+                        <div class="e">
+                          <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                          <div>
+                            <div class="e">
+                              <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section-title</span><span class="m">"</span>
+  <span class="m">&gt;</span><span class="tx">Datos de la Sucursal</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                            </div>
+                            <div class="e">
+                              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              <div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Nombre</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/DatosSucursal/Nombre</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Ciudad</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/DatosSucursal/Ciudad</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              </div>
+                            </div>
+                            <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                          </div>
+                        </div>
+                        <div class="e">
+                          <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                          <div>
+                            <div class="e">
+                              <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section-title</span><span class="m">"</span>
+  <span class="m">&gt;</span><span class="tx">Detalles del Producto</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                            </div>
+                            <div class="e">
+                              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              <div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Línea de Producto</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/DetallesProducto/LineaProducto</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Precio Unitario</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>$<div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/DetallesProducto/PrecioUnitario</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Cantidad</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/DetallesProducto/Cantidad</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              </div>
+                            </div>
+                            <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                          </div>
+                        </div>
+                        <div class="e">
+                          <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                          <div>
+                            <div class="e">
+                              <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">div</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">section-title</span><span class="m">"</span>
+  <span class="m">&gt;</span><span class="tx">Información Financiera</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                            </div>
+                            <div class="e">
+                              <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              <div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Impuesto (5%)</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>$<div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionFinanciera/Impuesto</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Total</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span> 
+    <span class="at">class</span><span class="m">="</span><span class="av">highlight</span><span class="m">"</span>
+  <span class="m">&gt;</span></div>
+                                      <div>$<div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionFinanciera/Total</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Método de Pago</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionFinanciera/MetodoPago</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Costo de Bienes Vendidos</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>$<div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionFinanciera/CostoBienesVendidos</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Porcentaje de Margen Bruto</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>
+                                        <div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionFinanciera/PorcentajeMargenBruto</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>%<div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div class="e">
+                                  <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  <div>
+                                    <div class="e">
+                                      <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">th</span><span class="m">&gt;</span><span class="tx">Ingreso Bruto</span><span class="m">&lt;/</span><span class="t">th</span><span class="m">&gt;</span></div>
+                                    </div>
+                                    <div class="e">
+                                      <div class="c" STYLE="margin-left:1em;text-indent:-2em"><A href="#" onclick="return false" onfocus="h()" class="b"></A><span class="m">&lt;</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      <div>$<div class="e">
+                                          <div STYLE="margin-left:1em;text-indent:-2em"><span class="b">&nbsp;</span><span class="m">&lt;</span><span class="t">xsl:value-of</span> 
+    <span class="at">select</span><span class="m">="</span><span class="av">Factura/InformacionFinanciera/IngresoBruto</span><span class="m">"</span>
+  <span class="m">/&gt;</span></div>
+                                        </div>
+                                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">td</span><span class="m">&gt;</span></div>
+                                      </div>
+                                    </div>
+                                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">tr</span><span class="m">&gt;</span></div>
+                                  </div>
+                                </div>
+                                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">table</span><span class="m">&gt;</span></div>
+                              </div>
+                            </div>
+                            <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                          </div>
+                        </div>
+                        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">div</span><span class="m">&gt;</span></div>
+                      </div>
+                    </div>
+                    <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">body</span><span class="m">&gt;</span></div>
+                  </div>
+                </div>
+                <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">html</span><span class="m">&gt;</span></div>
+              </div>
+            </div>
+            <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">xsl:template</span><span class="m">&gt;</span></div>
+          </div>
+        </div>
+        <div><span class="b">&nbsp;</span><span class="m">&lt;/</span><span class="t">xsl:stylesheet</span><span class="m">&gt;</span></div>
+      </div>
+    </div>
+  </BODY>
+</HTML>

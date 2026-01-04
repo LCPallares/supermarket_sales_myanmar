@@ -1,0 +1,54 @@
+
+<div class="invoice">
+  <div class="header">
+    <h1 style="display: inline-block; margin-right: 20px;">Factura #<xsl:value-of select="Factura/Encabezado/IDFactura"/></h1>
+    <div class="barcode" style="display: inline-block; vertical-align: middle;">
+      <img style="width: 100px; height: auto;">
+        <xsl:attribute name="src">
+          <xsl:text>data:image/png;base64,</xsl:text>
+          <xsl:value-of select="Factura/Encabezado/CodigoBarras"/>
+        </xsl:attribute>
+        <xsl:attribute name="alt">Código de Barras</xsl:attribute>
+      </img>
+    </div>
+  </div>
+</div>
+
+
+<div class="invoice">
+  <div class="header" style="display: flex; align-items: center;">
+    <h1 style="margin: 0;">Factura #<xsl:value-of select="Factura/Encabezado/IDFactura"/></h1>
+    <div class="barcode" style="margin-left: auto;">
+      <img style="width: 200px; height: auto;">
+        <xsl:attribute name="src">
+          <xsl:text>data:image/png;base64,</xsl:text>
+          <xsl:value-of select="Factura/Encabezado/CodigoBarras"/>
+        </xsl:attribute>
+        <xsl:attribute name="alt">Código de Barras</xsl:attribute>
+      </img>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

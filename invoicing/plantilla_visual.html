@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .factura {
+            background: white;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .cabecera {
+            background: #4a90e2;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+        .info-tienda {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .detalles {
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .productos {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .productos th {
+            background: #4a90e2;
+            color: white;
+            padding: 10px;
+        }
+        .productos td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .total {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: right;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        .pie {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            background: #ddd;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="factura">
+        <div class="cabecera">
+            <div class="logo-placeholder">LOGO</div>
+            <h1>FACTURA</h1>
+            <div>Nº: 750-67-8428</div>
+        </div>
+
+        <div class="info-tienda">
+            <h2>Sucursal A - Yangon</h2>
+            <p>Fecha: 05/01/2019</p>
+            <p>Hora: 13:08</p>
+        </div>
+
+        <div class="detalles">
+            <h3>Información del Cliente:</h3>
+            <p>Tipo de Cliente: Member</p>
+            <p>Género: Female</p>
+            <p>Categoría: Health and beauty</p>
+            <p>Método de Pago: Ewallet</p>
+            <p>Rating de Cliente: 9.1</p>
+        </div>
+
+        <table class="productos">
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>Health and beauty product</td>
+                <td>7</td>
+                <td>$74.69</td>
+                <td>$522.83</td>
+            </tr>
+        </table>
+
+        <div class="total">
+            <p>Subtotal: $522.83</p>
+            <p>Impuesto (5%): $26.14</p>
+            <p><strong>TOTAL: $548.97</strong></p>
+        </div>
+
+        <div class="pie">
+            <p>¡Gracias por su compra!</p>
+            <p>Gross margin percentage: 4.76%</p>
+            <p>Gross income: $26.14</p>
+        </div>
+    </div>
+</body>
+</html>

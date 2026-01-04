@@ -1,0 +1,82 @@
+<!-- Plantilla HTML original -->
+<html>
+  <head>
+    <style>
+      body { font-family: Arial, sans-serif; }
+      .invoice { border: 1px solid #ddd; padding: 20px; }
+      .header { background-color: #f0f0f0; padding: 10px; }
+      .details { margin-top: 20px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+  </head>
+  <body>
+    <div class="invoice">
+      <div class="header">
+        <h1>Factura #12345</h1>
+        <p>Fecha: 01/01/2023</p>
+      </div>
+      <div class="details">
+        <h2>Detalles del cliente</h2>
+        <p>Nombre: Juan Pérez</p>
+        <p>Email: juan@example.com</p>
+      </div>
+      <table>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+        </tr>
+        <tr>
+          <td>Producto A</td>
+          <td>2</td>
+          <td>$100</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
+
+<!-- Convertido a plantilla XSL -->
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:template match="/">
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; }
+          .invoice { border: 1px solid #ddd; padding: 20px; }
+          .header { background-color: #f0f0f0; padding: 10px; }
+          .details { margin-top: 20px; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        </style>
+      </head>
+      <body>
+        <div class="invoice">
+          <div class="header">
+            <h1>Factura #<xsl:value-of select="Factura/Encabezado/IDFactura"/></h1>
+            <p>Fecha: <xsl:value-of select="Factura/Encabezado/Fecha"/></p>
+          </div>
+          <div class="details">
+            <h2>Detalles del cliente</h2>
+            <p>Tipo: <xsl:value-of select="Factura/InformacionCliente/Tipo"/></p>
+            <p>Género: <xsl:value-of select="Factura/InformacionCliente/Genero"/></p>
+          </div>
+          <table>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+            </tr>
+            <tr>
+              <td><xsl:value-of select="Factura/DetallesProducto/LineaProducto"/></td>
+              <td><xsl:value-of select="Factura/DetallesProducto/Cantidad"/></td>
+              <td>$<xsl:value-of select="Factura/DetallesProducto/PrecioUnitario"/></td>
+            </tr>
+          </table>
+        </div>
+      </body>
+    </html>
+  </xsl:template>
+</xsl:stylesheet>
