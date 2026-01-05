@@ -10,7 +10,11 @@ st.set_page_config(page_title="Dashboard de Ventas de Supermercado de Myanmar", 
 # Cargar datos
 @st.cache_data
 def cargar_datos():
-    df = pd.read_csv("supermarket_Sales.csv")
+    # Cargar datos desde la URL
+    # data_url = "https://raw.githubusercontent.com/plotly/datasets/master/supermarket_Sales.csv"
+    # df = pd.read_csv(data_url)
+    # Cargar datos local
+    df = pd.read_csv("../../data/supermarket_Sales.csv")
     columnas_traducidas = {
         'Invoice ID': 'ID de Factura',
         'Branch': 'Sucursal',
@@ -136,6 +140,27 @@ end_date = st.sidebar.date_input("Fecha de fin", df['Fecha'].max())
 ciudades = st.sidebar.multiselect("Seleccionar ciudades", df['Ciudad'].unique())
 productos = st.sidebar.multiselect("Seleccionar líneas de producto", df['Línea de Producto'].unique())
 
+with st.sidebar.expander('Acerca de', expanded=True):
+    st.write('''
+        - Datos: [Datos de ventas de supermercado en Myanmar](https://raw.githubusercontent.com/plotly/datasets/master/supermarket_Sales.csv).
+        - :orange[**Top Productos**]: productos más vendidos por cantidad para el periodo seleccionado.
+        - :orange[**Cantidad**]: número de unidades vendidas.
+        ''')
+
+# Información del proyecto en el sidebar
+st.sidebar.markdown("---")
+st.sidebar.info(
+    """
+    **Proyecto de Análisis de Ventas de un Supermercado en Myanmar.**
+    
+    En este dashboard se muestra la informacion suministrada por la base de datos 
+    ademas de filtrarse la informacion segun los requerimientos.
+    
+    Desarrollado por: Luis Carlos Pallares Ascanio
+    """
+)
+
+
 # Aplicar filtros
 mask = (df['Fecha'].dt.date >= start_date) & (df['Fecha'].dt.date <= end_date)
 if ciudades:
@@ -148,28 +173,18 @@ filtered_df = df[mask]
 if nav == "Ventas":
     mostrar_metricas(filtered_df)
     graficar_mapa_de_ventas(filtered_df)
-    col1, col2, col3 = st.columns((1.5, 4.5, 2), gap='medium')  # margenes de las columnas
+    col1, col2 = st.columns(2)
     
     with col1:
         graficar_ventas_diarias(filtered_df)
         graficar_ventas_por_tipo_cliente_y_genero(filtered_df)
-        graficar_cantidad_de_productos(filtered_df)
+        # graficar_cantidad_de_productos(filtered_df)
+        mostrar_top_productos(filtered_df)
 
     with col2:
         graficar_ventas_por_linea_de_producto(filtered_df)
         graficar_metodos_de_pago(filtered_df)
         graficar_distribucion_precios_unitarios(filtered_df)
-
-    with col3:
-        st.markdown('#### Top Productos')
-        mostrar_top_productos(filtered_df)
-        
-        with st.expander('Acerca de', expanded=True):
-            st.write('''
-                - Datos: [Datos de ventas de supermercado en Myanmar](ficticio-data-source.com).
-                - :orange[**Top Productos**]: productos más vendidos por cantidad para el periodo seleccionado.
-                - :orange[**Cantidad**]: número de unidades vendidas.
-                ''')
 
     mostrar_analisis_margen_bruto(filtered_df)
 
