@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from streamlit_folium import st_folium
+import folium
 
 # Configuración de la página
 st.set_page_config(page_title="Dashboard de Ventas de Supermercado", layout="wide")
@@ -34,8 +36,9 @@ def load_data():
 
 df = load_data()
 
-# Título
+# Título y barra de navegación
 st.title("Dashboard de Ventas de Supermercado")
+nav = st.sidebar.radio("Navegar a", ["Métricas", "Gráficos", "Tabla de Datos"])
 
 # Filtros
 col1, col2, col3 = st.columns(3)
@@ -55,37 +58,50 @@ if productos:
     mask &= df['Línea de Producto'].isin(productos)
 filtered_df = df[mask]
 
-# Métricas
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Ventas Totales", f"${filtered_df['Total'].sum():,.2f}")
-col2.metric("Transacciones", f"{len(filtered_df):,}")
-col3.metric("Venta Promedio", f"${filtered_df['Total'].mean():,.2f}")
-col4.metric("Margen Bruto Promedio", f"${filtered_df['Ingreso Bruto'].mean():,.2f}")
+# Mostrar la sección seleccionada en la barra de navegación
+if nav == "Métricas":
+    # Métricas
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Ventas Totales", f"${filtered_df['Total'].sum():,.2f}")
+    col2.metric("Transacciones", f"{len(filtered_df):,}")
+    col3.metric("Venta Promedio", f"${filtered_df['Total'].mean():,.2f}")
+    col4.metric("Margen Bruto Promedio", f"${filtered_df['Ingreso Bruto'].mean():,.2f}")
 
-# Gráficos
-col1, col2 = st.columns(2)
+elif nav == "Gráficos":
+    # Gráficos
+    col1, col2 = st.columns(2)
 
-with col1:
-    # Ventas Diarias
-    ventas_diarias = filtered_df.groupby('Fecha')['Total'].sum().reset_index()
-    fig_ventas_diarias = px.line(ventas_diarias, x='Fecha', y='Total', title='Ventas Diarias')
-    st.plotly_chart(fig_ventas_diarias, use_container_width=True)
+    with col1:
+        # Ventas Diarias
+        ventas_diarias = filtered_df.groupby('Fecha')['Total'].sum().reset_index()
+        fig_ventas_diarias = px.line(ventas_diarias, x='Fecha', y='Total', title='Ventas Diarias')
+        st.plotly_chart(fig_ventas_diarias, use_container_width=True)
 
-    # Ventas por Tipo de Cliente y Género
-    ventas_tipo_genero = filtered_df.groupby(['Tipo de Cliente', 'Género'])['Total'].sum().unstack()
-    fig_tipo_genero = px.bar(ventas_tipo_genero, title='Ventas por Tipo de Cliente y Género', barmode='group')
-    st.plotly_chart(fig_tipo_genero, use_container_width=True)
+        # Ventas por Tipo de Cliente y Género
+        ventas_tipo_genero = filtered_df.groupby(['Tipo de Cliente', 'Género'])['Total'].sum().unstack()
+        fig_tipo_genero = px.bar(ventas_tipo_genero, title='Ventas por Tipo de Cliente y Género', barmode='group')
+        st.plotly_chart(fig_tipo_genero, use_container_width=True)
 
-with col2:
-    # Ventas por Línea de Producto
-    productos = filtered_df['Línea de Producto'].value_counts()
-    fig_productos = px.pie(values=productos.values, names=productos.index, title='Ventas por Línea de Producto')
-    st.plotly_chart(fig_productos, use_container_width=True)
+    with col2:
+        # Ventas por Línea de Producto
+        productos = filtered_df['Línea de Producto'].value_counts()
+        fig_productos = px.pie(values=productos.values, names=productos.index, title='Ventas por Línea de Producto')
+        st.plotly_chart(fig_productos, use_container_width=True)
 
-    # Ventas por Ciudad
-    ventas_ciudad = filtered_df.groupby('Ciudad')['Total'].sum().sort_values(ascending=True)
-    fig_ciudad = px.bar(ventas_ciudad, orientation='h', title='Ventas por Ciudad')
-    st.plotly_chart(fig_ciudad, use_container_width=True)
+        # Mapa de Ventas por Ciudad
+        m = folium.Map(location=[filtered_df['Ciudad'].mean(), filtered_df['Ciudad'].median()], zoom_start=5)
+        for city, sales in filtered_df.groupby('Ciudad')['Total'].sum().items():
+            folium.Marker(
+                location=[filtered_df[filtered_df['Ciudad'] == city]['Ciudad'].mean(),
+                          filtered_df[filtered_df['Ciudad'] == city]['Ciudad'].median()],
+                popup=f"{city}: ${sales:,.2f}",
+                icon=folium.Icon(color='red', icon='dollar-sign', prefix='fa')
+            ).add_to(m)
+        st_folium(m, width=800, height=500)
+
+elif nav == "Tabla de Datos":
+    # Tabla de Datos
+    st.dataframe(filtered_df)
 
 # Métodos de Pago
 metodos_pago = filtered_df['Método de Pago'].value_counts()
