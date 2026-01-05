@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from streamlit_folium import st_folium
 import folium
+import json
 
 # Configuración de la página
 st.set_page_config(page_title="Dashboard de Ventas de Supermercado de Myanmar", layout="wide")
@@ -10,7 +11,7 @@ st.set_page_config(page_title="Dashboard de Ventas de Supermercado de Myanmar", 
 # Cargar datos
 @st.cache_data
 def cargar_datos():
-    df = pd.read_csv("supermarket_sales.csv")
+    df = pd.read_csv("supermarket_Sales.csv")
     columnas_traducidas = {
         'Invoice ID': 'ID de Factura',
         'Branch': 'Sucursal',
@@ -124,7 +125,7 @@ if nav == "Métricas":
 
 elif nav == "Gráficos":
     graficar_mapa_de_ventas(filtered_df)
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         graficar_ventas_diarias(filtered_df)
@@ -135,6 +136,42 @@ elif nav == "Gráficos":
         graficar_ventas_por_linea_de_producto(filtered_df)
         graficar_metodos_de_pago(filtered_df)
         graficar_distribucion_precios_unitarios(filtered_df)
+    
+    with col3:
+        st.markdown('#### Top Productos')
+
+        top_products = filtered_df.groupby('Línea de Producto')['Cantidad'].sum().reset_index()
+        top_products = top_products.sort_values(by='Cantidad', ascending=False).head(5)
+        top_products.columns = ['producto', 'cantidad']
+        
+        # Convertir los datos a tipos nativos de Python
+        top_products['cantidad'] = top_products['cantidad'].astype(int).tolist()
+        
+        # Crear el dataframe con la configuración actualizada
+        st.dataframe(
+            top_products,
+            column_order=("producto", "cantidad"),
+            hide_index=True,
+            width=None,
+            column_config={
+                "producto": st.column_config.TextColumn(
+                    "Producto",
+                ),
+                "cantidad": st.column_config.ProgressColumn(
+                    "Cantidad",
+                    format="%d",
+                    min_value=0,
+                    max_value=int(max(top_products['cantidad'])),
+                )}
+        )
+    
+        with st.expander('Acerca de', expanded=True):
+            st.write('''
+                - Datos: [Datos de ventas de supermercado en Myanmar](ficticio-data-source.com).
+                - :orange[**Top Productos**]: productos más vendidos por cantidad para el periodo seleccionado.
+                - :orange[**Cantidad**]: número de unidades vendidas.
+                ''')
+    
 
 elif nav == "Tabla de Datos":
     st.dataframe(filtered_df)

@@ -156,3 +156,84 @@ if __name__ == "__main__":
         run_app()
     else:
         main()
+
+
+
+
+
+
+
+
+
+
+
+        """
+        # Ordenar productos por cantidad vendida y tomar los 5 primeros
+        top_products = filtered_df.groupby('Línea de Producto')['Cantidad'].sum().reset_index().sort_values(by='Cantidad', ascending=False).head(5)
+        top_products.columns = ['producto', 'cantidad']
+
+        top_products = filtered_df.groupby('Línea de Producto')['Cantidad'].sum().reset_index().sort_values(by='Cantidad', ascending=False).head(5)
+        top_products.columns = ['producto', 'cantidad']
+
+        # Convertir a tipos serializables
+        top_products['cantidad'] = top_products['cantidad'].apply(lambda x: int(x) if isinstance(x, (int, float)) else x)
+
+
+        st.dataframe(top_products,
+                     column_order=("producto", "cantidad"),
+                     hide_index=True,
+                     width=None,
+                     column_config={
+                        "producto": st.column_config.TextColumn(
+                            "Producto",
+                        ),
+                        "cantidad": st.column_config.ProgressColumn(
+                            "Cantidad",
+                            format="%d",
+                            min_value=0,
+                            max_value=top_products['cantidad'].max(),
+                         )}
+                     )
+        """
+
+
+
+        """
+        # Convertir a tipos serializables
+        top_products['cantidad'] = top_products['cantidad'].astype(int)
+
+        # Convertir a lista de diccionarios
+        data_dict = top_products.to_dict(orient='records')
+        
+        st.table(data_dict)  # Aquí usamos st.table en lugar de st.dataframe para simplicidad
+
+        # Si necesitas mantener la configuración de columnas, puedes hacerlo de esta manera:
+        st.table([
+            {
+                "Producto": item['producto'],
+                "Cantidad": json.dumps(item['cantidad'])
+            } for item in data_dict
+        ])
+        """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
