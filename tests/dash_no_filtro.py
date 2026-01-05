@@ -6,10 +6,16 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Cargar datos desde la URL
-data_url = "https://raw.githubusercontent.com/plotly/datasets/master/supermarket_Sales.csv"
-df = pd.read_csv(data_url)
-print(df.columns)
+#data_url = "https://raw.githubusercontent.com/plotly/datasets/master/supermarket_Sales.csv"
+#df = pd.read_csv(data_url)
+
+#ruta_excel = 'supermarket_Sales.csv'
+#df.to_csv(ruta_excel, index=False)
+#print("DataFrame successfully exported to Excel.")
+
+df = pd.read_csv('supermarket_Sales.csv')
 df['Date'] = pd.to_datetime(df['Date'])
+
 
 # Calcular métricas
 ventas_totales = df['Total'].sum()

@@ -65,6 +65,12 @@ if productos:
     mask &= df['Línea de Producto'].isin(productos)
 filtered_df = df[mask]
 
+# Función para mostrar métodos de pago
+def mostrar_metodos_pago(df):
+    metodos_pago = df['Método de Pago'].value_counts()
+    fig_metodos_pago = px.pie(values=metodos_pago.values, names=metodos_pago.index, title='Métodos de Pago')
+    st.plotly_chart(fig_metodos_pago, use_container_width=True)
+
 # Mostrar la sección seleccionada en la barra de navegación
 if nav == "Métricas":
     # Métricas
@@ -73,6 +79,9 @@ if nav == "Métricas":
     col2.metric("Transacciones", f"{len(filtered_df):,}")
     col3.metric("Venta Promedio", f"${filtered_df['Total'].mean():,.2f}")
     col4.metric("Margen Bruto Promedio", f"${filtered_df['Ingreso Bruto'].mean():,.2f}")
+    
+    # Métodos de Pago
+    mostrar_metodos_pago(filtered_df)
 
 elif nav == "Gráficos":
     # Gráficos
@@ -105,12 +114,30 @@ elif nav == "Gráficos":
                     icon=folium.Icon(color='red', icon='dollar-sign', prefix='fa')
                 ).add_to(m)
         st_folium(m, width=800, height=500)
+    
+    # Métodos de Pago
+    mostrar_metodos_pago(filtered_df)
 
 elif nav == "Tabla de Datos":
     # Tabla de Datos
     st.dataframe(filtered_df)
+    
+    # Métodos de Pago
+    mostrar_metodos_pago(filtered_df)
 
-# Métodos de Pago
-metodos_pago = filtered_df['Método de Pago'].value_counts()
-fig_metodos_pago = px.pie(values=metodos_pago.values, names=metodos_pago.index, title='Métodos de Pago')
-st.plotly_chart(fig_metodos_pago, use_container_width=True)
+# Añadir más componentes
+st.markdown("---")  # Separador visual
+
+# Gráfico de barras para mostrar la cantidad de productos vendidos por línea de producto
+ventas_cantidad = filtered_df.groupby('Línea de Producto')['Cantidad'].sum().sort_values(ascending=False)
+fig_cantidad = px.bar(ventas_cantidad, title='Cantidad de Productos Vendidos por Línea de Producto')
+st.plotly_chart(fig_cantidad, use_container_width=True)
+
+# Histograma para ver la distribución de los precios unitarios
+fig_precio = px.histogram(filtered_df, x="Precio Unitario", nbins=20, title="Distribución de Precios Unitarios")
+st.plotly_chart(fig_precio, use_container_width=True)
+
+# Mostrar información sobre el margen bruto
+st.subheader("Análisis del Margen Bruto")
+margen_promedio = filtered_df['Porcentaje de Margen Bruto'].mean()
+st.write(f"El margen bruto promedio es: {margen_promedio:.2f}%")
