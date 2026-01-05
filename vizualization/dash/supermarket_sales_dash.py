@@ -46,43 +46,54 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # Componentes de filtro
 filtro_fecha = dcc.DatePickerRange(
     id='filtro-fecha',
-    start_date=df['Fecha'].min(),  # Fecha inicial del rango
-    end_date=df['Fecha'].max(),    # Fecha final del rango
+    start_date=df['Fecha'].min(),
+    end_date=df['Fecha'].max(),
     display_format='YYYY-MM-DD'
 )
 
 filtro_ciudad = dcc.Dropdown(
     id='filtro-ciudad',
     options=[{'label': ciudad, 'value': ciudad} for ciudad in df['Ciudad'].unique()],
-    multi=True,  # Permite selección múltiple
+    multi=True,
     placeholder="Seleccionar ciudad(es)"
 )
 
 filtro_producto = dcc.Dropdown(
     id='filtro-producto',
     options=[{'label': producto, 'value': producto} for producto in df['Línea de Producto'].unique()],
-    multi=True,  # Permite selección múltiple
+    multi=True,
     placeholder="Seleccionar línea(s) de producto"
 )
 
-# Definir el layout de la aplicación
+# Definir estilos personalizados
+styles = {
+    'background': '#EAEDF2FF',
+    'filters_row': {'backgroundColor': '#333333FF', 'padding': '20px', 'borderRadius': '10px', 'margin-bottom': '20px'},
+    'metrics_row': {'backgroundColor': '#45474DFF', 'padding': '20px', 'borderRadius': '10px', 'margin-bottom': '20px'},
+    'card_ventas_totales': {'backgroundColor': '#96E0B2FF'},
+    'card_transacciones': {'backgroundColor': '#C1E7FCFF'},
+    'card_venta_promedio': {'backgroundColor': '#F6B6EAFF'},
+    'card_margen_bruto': {'backgroundColor': '#C1E7FCFF'},
+}
+
+# Definir el layout de la aplicación con los nuevos estilos
 app.layout = dbc.Container([
-    html.H1("Dashboard de Ventas de Supermercado", className="my-4"),
+    html.H1("Dashboard de Ventas de Supermercado", className="my-4", style={'textAlign': 'center'}),
     
     # Fila de filtros
     dbc.Row([
         dbc.Col(filtro_fecha, width=4),
         dbc.Col(filtro_ciudad, width=4),
         dbc.Col(filtro_producto, width=4),
-    ], className="mb-4"),
+    ], style=styles['filters_row']),
     
     # Fila de métricas principales
     dbc.Row([
-        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Ventas Totales"), html.H2(id="ventas-totales")]), color="light"), width=3),
-        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Transacciones"), html.H2(id="num-transacciones")]), color="light"), width=3),
-        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Venta Promedio"), html.H2(id="venta-promedio")]), color="light"), width=3),
-        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Margen Bruto Promedio"), html.H2(id="margen-bruto-promedio")]), color="light"), width=3),
-    ], className="mb-4"),
+        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Ventas Totales"), html.H2(id="ventas-totales")]), style=styles['card_ventas_totales']), width=3),
+        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Transacciones"), html.H2(id="num-transacciones")]), style=styles['card_transacciones']), width=3),
+        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Venta Promedio"), html.H2(id="venta-promedio")]), style=styles['card_venta_promedio']), width=3),
+        dbc.Col(dbc.Card(dbc.CardBody([html.H4("Margen Bruto Promedio"), html.H2(id="margen-bruto-promedio")]), style=styles['card_margen_bruto']), width=3),
+    ], style=styles['metrics_row']),
     
     # Fila de gráficos: ventas diarias y productos
     dbc.Row([
@@ -100,11 +111,10 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(dcc.Graph(id='grafico-metodos-pago'), width=12),
     ])
-])
+], style={'backgroundColor': styles['background'], 'padding': '20px'})  # Aplicar color de fondo al contenedor principal
 
-# Definir el callback para actualizar el dashboard
+# El callback y la función update_dashboard permanecen sin cambios
 @app.callback(
-    # Outputs: todos los elementos que se actualizarán
     [Output('ventas-totales', 'children'),
      Output('num-transacciones', 'children'),
      Output('venta-promedio', 'children'),
@@ -114,17 +124,14 @@ app.layout = dbc.Container([
      Output('grafico-tipo-genero', 'figure'),
      Output('grafico-ciudad', 'figure'),
      Output('grafico-metodos-pago', 'figure')],
-    # Inputs: los filtros que activarán la actualización
     [Input('filtro-fecha', 'start_date'),
      Input('filtro-fecha', 'end_date'),
      Input('filtro-ciudad', 'value'),
      Input('filtro-producto', 'value')]
 )
 def update_dashboard(start_date, end_date, ciudades, productos):
-    # Crear una copia del DataFrame original
     dff = df.copy()
     
-    # Aplicar filtros
     if start_date and end_date:
         dff = dff[(dff['Fecha'] >= start_date) & (dff['Fecha'] <= end_date)]
     
@@ -134,33 +141,26 @@ def update_dashboard(start_date, end_date, ciudades, productos):
     if productos:
         dff = dff[dff['Línea de Producto'].isin(productos)]
     
-    # Calcular métricas
     ventas_totales = dff['Total'].sum()
     num_transacciones = len(dff)
     venta_promedio = ventas_totales / num_transacciones if num_transacciones > 0 else 0
     margen_bruto_promedio = dff['Ingreso Bruto'].mean()
 
-    # Crear gráfico de ventas diarias
     ventas_diarias = dff.groupby('Fecha')['Total'].sum().reset_index()
     fig_ventas_diarias = px.line(ventas_diarias, x='Fecha', y='Total', title='Ventas Diarias')
 
-    # Crear gráfico de líneas de productos
     productos = dff['Línea de Producto'].value_counts()
     fig_productos = px.pie(values=productos.values, names=productos.index, title='Ventas por Línea de Producto')
 
-    # Crear gráfico de ventas por tipo de cliente y género
     ventas_tipo_genero = dff.groupby(['Tipo de Cliente', 'Género'])['Total'].sum().unstack()
     fig_tipo_genero = px.bar(ventas_tipo_genero, title='Ventas por Tipo de Cliente y Género', barmode='group')
 
-    # Crear gráfico de ventas por ciudad
     ventas_ciudad = dff.groupby('Ciudad')['Total'].sum().sort_values(ascending=True)
     fig_ciudad = px.bar(ventas_ciudad, orientation='h', title='Ventas por Ciudad')
 
-    # Crear gráfico de métodos de pago
     metodos_pago = dff['Método de Pago'].value_counts()
     fig_metodos_pago = px.pie(values=metodos_pago.values, names=metodos_pago.index, title='Métodos de Pago')
 
-    # Retornar todos los valores actualizados
     return (
         f"${ventas_totales:,.2f}",
         f"{num_transacciones}",
