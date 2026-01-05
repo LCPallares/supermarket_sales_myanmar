@@ -5,7 +5,7 @@ from streamlit_folium import st_folium
 import folium
 
 # Configuración de la página
-st.set_page_config(page_title="Dashboard de Ventas de Supermercado", layout="wide")
+st.set_page_config(page_title="Dashboard de Ventas de Supermercado de Myanmar", layout="wide")
 
 # Cargar datos
 @st.cache_data
@@ -36,8 +36,15 @@ def load_data():
 
 df = load_data()
 
+# Coordenadas de las ciudades de Myanmar
+city_coordinates = {
+    'Yangon': [16.8409, 96.1735],
+    'Naypyitaw': [19.7633, 96.0785],
+    'Mandalay': [21.9588, 96.0891]  # Agregamos Mandalay por si acaso
+}
+
 # Título y barra de navegación
-st.title("Dashboard de Ventas de Supermercado")
+st.title("Dashboard de Ventas de Supermercado de Myanmar")
 nav = st.sidebar.radio("Navegar a", ["Métricas", "Gráficos", "Tabla de Datos"])
 
 # Filtros
@@ -89,14 +96,14 @@ elif nav == "Gráficos":
         st.plotly_chart(fig_productos, use_container_width=True)
 
         # Mapa de Ventas por Ciudad
-        m = folium.Map(location=[filtered_df['Ciudad'].mean(), filtered_df['Ciudad'].median()], zoom_start=5)
+        m = folium.Map(location=[19.7500, 96.0800], zoom_start=6)  # Centrado en Myanmar
         for city, sales in filtered_df.groupby('Ciudad')['Total'].sum().items():
-            folium.Marker(
-                location=[filtered_df[filtered_df['Ciudad'] == city]['Ciudad'].mean(),
-                          filtered_df[filtered_df['Ciudad'] == city]['Ciudad'].median()],
-                popup=f"{city}: ${sales:,.2f}",
-                icon=folium.Icon(color='red', icon='dollar-sign', prefix='fa')
-            ).add_to(m)
+            if city in city_coordinates:
+                folium.Marker(
+                    location=city_coordinates[city],
+                    popup=f"{city}: ${sales:,.2f}",
+                    icon=folium.Icon(color='red', icon='dollar-sign', prefix='fa')
+                ).add_to(m)
         st_folium(m, width=800, height=500)
 
 elif nav == "Tabla de Datos":

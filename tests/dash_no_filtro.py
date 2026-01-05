@@ -8,13 +8,14 @@ import plotly.graph_objects as go
 # Cargar datos desde la URL
 data_url = "https://raw.githubusercontent.com/plotly/datasets/master/supermarket_Sales.csv"
 df = pd.read_csv(data_url)
+print(df.columns)
 df['Date'] = pd.to_datetime(df['Date'])
 
 # Calcular métricas
 ventas_totales = df['Total'].sum()
 num_transacciones = len(df)
 tamano_promedio = ventas_totales / num_transacciones
-velocidad_promedio = df['Rating'].mean()
+margen_bruto_promedio = df['Gross income'].mean()
 
 # Gráfico de ventas y cantidad por mes
 ventas_mensuales = df.groupby(df['Date'].dt.strftime('%b'))['Total'].sum().reset_index()
@@ -46,7 +47,7 @@ app.layout = dbc.Container([
         dbc.Col(dbc.Card([dbc.CardBody([html.H4("Ventas Totales"), html.H2(f"${ventas_totales:,.2f}")])], color="light")),
         dbc.Col(dbc.Card([dbc.CardBody([html.H4("Transacciones"), html.H2(f"{num_transacciones}")])], color="light")),
         dbc.Col(dbc.Card([dbc.CardBody([html.H4("Venta Promedio"), html.H2(f"${tamano_promedio:,.2f}")])], color="light")),
-        dbc.Col(dbc.Card([dbc.CardBody([html.H4("Calificación Promedio"), html.H2(f"{velocidad_promedio:.2f}")])], color="light")),
+        dbc.Col(dbc.Card([dbc.CardBody([html.H4("Margen Bruto Promedio"), html.H2(f"${margen_bruto_promedio:,.2f}")])], color="light")),
     ], className="mb-4"),
     
     dbc.Row([
