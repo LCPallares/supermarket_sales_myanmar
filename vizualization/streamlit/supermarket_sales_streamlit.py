@@ -10,7 +10,7 @@ st.set_page_config(page_title="Dashboard de Ventas de Supermercado de Myanmar", 
 # Cargar datos
 @st.cache_data
 def cargar_datos():
-    df = pd.read_csv("supermarket_Sales.csv")
+    df = pd.read_csv("supermarket_sales.csv")
     columnas_traducidas = {
         'Invoice ID': 'ID de Factura',
         'Branch': 'Sucursal',
@@ -97,18 +97,16 @@ def mostrar_analisis_margen_bruto(df):
     st.write(f"El margen bruto promedio es: {margen_promedio:.2f}%")
 
 # Título y barra de navegación
+st.sidebar.header("Secciones")
 st.title("Dashboard de Ventas de Supermercado de Myanmar")
 nav = st.sidebar.radio("Navegar a", ["Métricas", "Gráficos", "Tabla de Datos"])
 
-# Filtros
-col1, col2, col3 = st.columns(3)
-with col1:
-    start_date = st.date_input("Fecha de inicio", df['Fecha'].min())
-with col2:
-    end_date = st.date_input("Fecha de fin", df['Fecha'].max())
-with col3:
-    ciudades = st.multiselect("Seleccionar ciudades", df['Ciudad'].unique())
-    productos = st.multiselect("Seleccionar líneas de producto", df['Línea de Producto'].unique())
+# Filtros en el sidebar
+st.sidebar.header("Filtros")
+start_date = st.sidebar.date_input("Fecha de inicio", df['Fecha'].min())
+end_date = st.sidebar.date_input("Fecha de fin", df['Fecha'].max())
+ciudades = st.sidebar.multiselect("Seleccionar ciudades", df['Ciudad'].unique())
+productos = st.sidebar.multiselect("Seleccionar líneas de producto", df['Línea de Producto'].unique())
 
 # Aplicar filtros
 mask = (df['Fecha'].dt.date >= start_date) & (df['Fecha'].dt.date <= end_date)
@@ -118,26 +116,25 @@ if productos:
     mask &= df['Línea de Producto'].isin(productos)
 filtered_df = df[mask]
 
+
 # Mostrar la sección seleccionada en la barra de navegación
 if nav == "Métricas":
     mostrar_metricas(filtered_df)
     #graficar_metodos_de_pago(filtered_df)
 
 elif nav == "Gráficos":
+    graficar_mapa_de_ventas(filtered_df)
     col1, col2 = st.columns(2)
 
     with col1:
         graficar_ventas_diarias(filtered_df)
         graficar_ventas_por_tipo_cliente_y_genero(filtered_df)
+        graficar_cantidad_de_productos(filtered_df)
 
     with col2:
         graficar_ventas_por_linea_de_producto(filtered_df)
-        graficar_mapa_de_ventas(filtered_df)
-    
-    graficar_metodos_de_pago(filtered_df)
-
-    graficar_cantidad_de_productos(filtered_df)
-    graficar_distribucion_precios_unitarios(filtered_df)
+        graficar_metodos_de_pago(filtered_df)
+        graficar_distribucion_precios_unitarios(filtered_df)
 
 elif nav == "Tabla de Datos":
     st.dataframe(filtered_df)
