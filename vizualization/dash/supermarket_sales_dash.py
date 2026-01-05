@@ -1,120 +1,114 @@
 import dash
-from dash import html
-from dash import dcc
-from dash.dash_table import DataTable
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
-
+# Cargar datos desde la URL
 data_url = "https://raw.githubusercontent.com/plotly/datasets/master/supermarket_Sales.csv"
-sales = pd.read_csv(data_url)
+df = pd.read_csv(data_url)
+# Cargar datos local
+# datos = "supermarket_Sales.csv"
+# df = pd.read_csv(datos)
 
-sales["Date"] = pd.to_datetime(sales["Date"])
-sales = sales.sort_values("Date").set_index("Date")
- 
-sales["Revenue"] = sales["Unit price"] * sales["Quantity"]
- 
-sales.rename(columns={"Gross income": "Income after costs and taxes"}, inplace=True)
+columnas_traducidas = {
+    'Invoice ID': 'ID de Factura',
+    'Branch': 'Sucursal',
+    'City': 'Ciudad',
+    'Customer type': 'Tipo de Cliente',
+    'Gender': 'Género',
+    'Product line': 'Línea de Producto',
+    'Unit price': 'Precio Unitario',
+    'Quantity': 'Cantidad',
+    'Tax 5%': 'Impuesto 5%',
+    'Total': 'Total',
+    'Date': 'Fecha',
+    'Time': 'Hora',
+    'Payment': 'Método de Pago',
+    'Cost of goods sold': 'Costo de Bienes Vendidos',
+    'Gross margin percentage': 'Porcentaje de Margen Bruto',
+    'Gross income': 'Ingreso Bruto',
+    'Customer stratification rating': 'Calificación de Estratificación del Cliente'
+}
 
-daily_sales_number = (
-    sales["Invoice ID"].groupby(sales.index.date).nunique().rename("Number of sales")
-)
+df = df.rename(columns=columnas_traducidas)
 
+# Convertir la columna 'Fecha' a datetime
+df['Fecha'] = pd.to_datetime(df['Fecha'])
 
-title_font_size = 30
- 
-figure_daily_sales_number = px.line(
-    daily_sales_number, title="Daily number of sales"
-).update_layout(title_font_size=title_font_size)
+# Calcular métricas
+ventas_totales = df['Total'].sum()
+num_transacciones = len(df)
+venta_promedio = ventas_totales / num_transacciones
+margen_bruto_promedio = df['Ingreso Bruto'].mean()
 
-
-m7d_mean_revenue = (
-    sales["Revenue"].groupby(sales.index.date).sum().rolling(7, min_periods=7).mean()
-)
- 
-figure_m7d_mean_revenue = px.line(
-    m7d_mean_revenue, title="7-day moving average of daily revenue"
-).update_layout(title_font_size=title_font_size)
-
-
-figure_product_line = px.pie(
-    sales.groupby("Product line")["Revenue"].sum().reset_index(),
-    names="Product line",
-    values="Revenue",
-    title="Product lines ratio",
-).update_layout(title_font_size=title_font_size)
- 
-figure_revenue_bycity = px.bar(
-    sales.groupby(["City"])["Revenue"].sum(), title="Revenue by city"
-).update_layout(title_font_size=title_font_size)
+#print(f"\nventas_totales: {ventas_totales}\n \nnum_transacciones: {num_transacciones}\n \nventa_promedio: {venta_promedio}\n \nmargen_bruto_promedio: {margen_bruto_promedio}\n")
 
 
-sums = (
-    sales[
-        [
-            "Revenue",
-            "Tax 5%",
-            "Cost of goods sold",
-            "Income after costs and taxes",
-        ]
-    ]
-    .sum()
-    .rename("Value")
-    .reset_index()
-    .rename(columns={"index": "Item"})
-)
+# Gráfico de ventas diarias
+ventas_diarias = df.groupby('Fecha')['Total'].sum().reset_index()
+fig_ventas_diarias = px.line(ventas_diarias, x='Fecha', y='Total', title='Ventas Diarias')
 
+# Gráfico de líneas de productos
+productos = df['Línea de Producto'].value_counts()
+fig_productos = px.pie(values=productos.values, names=productos.index, title='Ventas por Línea de Producto')
 
-sums_datatable = html.Div(
-    [
-        html.P(),
-        html.Label(
-            "Revenue breakdown",
-            style={"font-size": f"{title_font_size}px", "font-color": "grey"},
-        ),
-        html.P(),
-        DataTable(
-            data=sums.to_dict("records"),
-            columns=[{"name": col, "id": col} for col in ["Item", "Value"]],
-        ),
-    ]
-)
+# Gráfico de ventas por tipo de cliente y género
+ventas_tipo_genero = df.groupby(['Tipo de Cliente', 'Género'])['Total'].sum().unstack()
+fig_tipo_genero = px.bar(ventas_tipo_genero, title='Ventas por Tipo de Cliente y Género', barmode='group')
 
+# Gráfico de ventas por ciudad
+ventas_ciudad = df.groupby('Ciudad')['Total'].sum().sort_values(ascending=True)
+fig_ciudad = px.bar(ventas_ciudad, orientation='h', title='Ventas por Ciudad')
 
-row_summary_metrics = dbc.Row(
-    [
-        dbc.Col("", width=1),
-        dbc.Col(dcc.Graph(figure=figure_product_line)),
-        dbc.Col(dcc.Graph(figure=figure_revenue_bycity)),
-        dbc.Col(sums_datatable),
-        dbc.Col("", width=1),
-    ],
-)
+# Gráfico de métodos de pago
+metodos_pago = df['Método de Pago'].value_counts()
+fig_metodos_pago = px.pie(values=metodos_pago.values, names=metodos_pago.index, title='Métodos de Pago')
 
+"""
+fig_ventas_diarias.show()
+fig_productos.show()
+fig_tipo_genero.show()
+fig_ciudad.show()
+fig_metodos_pago.show()
+"""
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-app.layout = html.Div(
-    [
-        html.H1("Sales KPIs"),
-        html.H2("Sales Dataset"),
-        html.Ul(
-            [
-                html.Li(f"Number of cities: {sales['City'].nunique()}"),
-                html.Li(
-                    f"Time period: {sales.index.date[0].isoformat()[:10]} - {sales.index.date[-1].isoformat()[:10]}"
-                ),
-                html.Li(["Data Source: ", html.A(data_url, href=data_url)]),
-            ]
-        ),
-        dcc.Graph(figure=figure_daily_sales_number),
-        dcc.Graph(figure=figure_m7d_mean_revenue),
-        row_summary_metrics,
-        dcc.Graph(figure=figure_daily_sales_number),
-        dcc.Graph(figure=figure_m7d_mean_revenue),
-    ]
-)
- 
-if __name__ == "__main__":
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
+#09b39d
+app.layout = dbc.Container([
+    html.H1("Dashboard de Ventas de Supermercado", className="my-4"),
+    
+    dbc.Row([ # hex f6f8fb rgb 246, 248, 251
+        dbc.Col(dbc.Card([dbc.CardBody([html.H4("Ventas Totales"),
+                                        html.H2(f"${ventas_totales:,.2f}")])
+                                ], style={'background-color': '#09b39d', 'color': 'green'}
+                    ), style={'background-color': '#e7f4f6'}),
+        dbc.Col(dbc.Card([dbc.CardBody([html.H4("Transacciones"), html.H2(f"{num_transacciones}")])], color="light", style={'background-color': 'hex(f1963a)', 'color': 'blue'})),
+        dbc.Col(dbc.Card([dbc.CardBody([html.H4("Venta Promedio"), html.H2(f"${venta_promedio:,.2f}")])], color="light")),
+        dbc.Col(dbc.Card([dbc.CardBody([html.H4("Margen Bruto Promedio"), html.H2(f"${margen_bruto_promedio:,.2f}")])], color="light")),
+    ], className="mb-4"),
+    
+    dbc.Row([
+        dbc.Col(dcc.Graph(figure=fig_ventas_diarias), width=8),
+        dbc.Col(dcc.Graph(figure=fig_productos), width=4),
+    ], className="mb-4"),
+    
+    dbc.Row([
+        dbc.Col(dcc.Graph(figure=fig_tipo_genero), width=8),
+        dbc.Col(dcc.Graph(figure=fig_ciudad), width=4),
+    ], className="mb-4"),
+    
+    dbc.Row([
+        dbc.Col(dcc.Graph(figure=fig_metodos_pago), width=12),
+    ])
+])
+
+if __name__ == '__main__':
     app.run(debug=True)
+
