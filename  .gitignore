@@ -1,0 +1,53 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.log
+
+# --- Entornos virtuales ---
+.env
+.venv/
+env/
+venv/
+ENV/
+*.env
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# --- Dash / Streamlit ---
+.streamlit/
+dash_cache/
+*.db
+
+# --- Datos ---
+data/raw/
+data/temp/
+*.csv
+*.xlsx
+*.xls
+*.json
+*.parquet
+
+# --- Facturas (Invoicing) ---
+invoicing/output/
+*.pdf
+
+# --- Reportes ---
+reporting/output/
+*.pptx
+*.pdf
+
+# --- Configuración del sistema ---
+.DS_Store
+Thumbs.db
+
+# --- VSCode / IDE ---
+.vscode/
+.idea/
+*.swp
