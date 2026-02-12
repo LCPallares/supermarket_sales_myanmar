@@ -28,6 +28,16 @@ Este proyecto tiene como objetivo realizar un **análisis integral de datos de u
 
 ---
 
+## 📷  Capturas de Pantalla
+
+| Stack     |                                                    |
+| --------- | -------------------------------------------------- |
+| Streamlit | ![streamlit_1](assets/screenshots/streamlit_1.jpg) |
+
+
+
+---
+
 ## 📂 Estructura del proyecto
 
 ```
@@ -70,6 +80,7 @@ Este proyecto tiene como objetivo realizar un **análisis integral de datos de u
      ```
      python dashboards/app_dash.py
      ```
+   
    - **Streamlit**:
      
      ```
